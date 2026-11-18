@@ -2,7 +2,7 @@
 
 Personal portfolio of Patricio Hernández Vergara, a full-stack developer from Viña del Mar, Chile, focused on PHP and Python back-end development, process automation, web scraping and AI projects with RAG.
 
-**Live site:** https://TU-DOMINIO.vercel.app
+**Live site:** https://patricio-hernandez.vercel.app
 
 ## Features
 
