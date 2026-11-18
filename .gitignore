@@ -4,9 +4,6 @@ assets/projects/Planilla/
 *.psd
 *.docx
 
-# CV: contienen el número de teléfono (pendiente de decisión, ver reporte)
-assets/cv/*.pdf
-
 # Notas locales
 REPORTE.md
 TITULACION.md
