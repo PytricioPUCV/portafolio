@@ -1,0 +1,30 @@
+# Archivos fuente y privados (no se publican)
+assets/originals/
+assets/projects/Planilla/
+*.psd
+*.docx
+
+# CV: contienen el número de teléfono (pendiente de decisión, ver reporte)
+assets/cv/*.pdf
+
+# Notas locales
+REPORTE.md
+TITULACION.md
+PENDIENTES.md
+
+# Editores y herramientas
+.continue/
+.claude/
+.vscode/
+.idea/
+*.swp
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Dependencias y logs
+node_modules/
+*.log
+.vercel/

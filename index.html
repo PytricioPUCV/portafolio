@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patricio Hernández Vergara</title>
+    <meta name="description"
+        content="Portafolio de Patricio Hernández Vergara, desarrollador full stack de Viña del Mar, Chile. Back-end con PHP y Python, automatización, web scraping y proyectos de IA con RAG.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Patricio Hernández Vergara · Desarrollador full stack">
+    <meta property="og:description"
+        content="Back-end con PHP y Python, automatización, web scraping y proyectos de IA con RAG.">
+    <meta name="theme-color" content="#040404">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print"
+        onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
+</head>
+
+<body>
+    <canvas id="star-bg"></canvas>
+    <div class="container">
+        <header class="header">
+            <nav class="nav">
+                <div class="nav-brand"><a href="#home">PytricioPUCV.com</a>
+                </div>
+                <div class="nav-right">
+                    <ul id="nav-menu" class="nav-menu">
+                        <li><a href="#home" class="nav-link" data-i18n="nav_home">Home</a></li>
+                        <li><a href="#about" class="nav-link" data-i18n="nav_about">About me</a></li>
+                        <li><a href="#experience" class="nav-link" data-i18n="nav_experience">Experience</a></li>
+                        <li><a href="#projects" class="nav-link" data-i18n="nav_projects">Projects</a></li>
+                        <li><a href="#contact" class="nav-link" data-i18n="nav_contact">Contact</a></li>
+                    </ul>
+                    <div class="nav-theme">
+                        <button id="theme-toggle-btn" class="theme-toggle-btn" title="Change theme">
+                            <span id="theme-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" fill="#FFC107" />
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="nav-lang">
+                        <button id="lang-flag-btn" class="lang-flag-btn" title="Change language">
+                            <img id="lang-flag-img" class="lang-flag-img" width="24" height="16" src="https://flagcdn.com/w40/us.png"
+                                alt="Language">
+                        </button>
+                    </div>
+                    <button id="nav-toggle" class="nav-toggle" type="button" aria-controls="nav-menu"
+                        aria-expanded="false" aria-label="Menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </nav>
+        </header>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">
+                        <span class="greeting" data-i18n="greeting">Hello, I'm</span>
+                        <span class="name" data-i18n="name">Patricio</span>
+                        <span class="title" data-i18n="title">Full-stack developer</span>
+                    </h1>
+                    <p class="hero-description" data-i18n="hero_desc">Web development, PHP and Python back-end, and process automation.</p>
+                    <div class="hero-buttons">
+                        <a class="btn btn-primary cv-link" href="assets/cv/CV-Patricio-Hernandez-Vergara-EN.pdf" target="_blank"
+                            rel="noopener"><i class="fas fa-file-lines" aria-hidden="true"></i> <span
+                                data-i18n="btn_cv_view">View CV</span></a>
+                        <a class="btn btn-secondary cv-link" href="assets/cv/CV-Patricio-Hernandez-Vergara-EN.pdf"
+                            download="Resume Patricio Hernández Vergara.pdf"><i class="fas fa-download"
+                                aria-hidden="true"></i> <span data-i18n="btn_cv_download">Download CV</span></a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="code-animation">
+                        <div class="code-line"><span class="keyword">const</span> <span
+                                class="variable">developer</span> = {</div>
+                        <div class="code-line indent">name: <span class="string">'Patricio Hernández Vergara'</span>,</div>
+                        <div class="code-line indent">username: <span class="string">'PytricioPUCV'</span>,</div>
+                        <div class="code-line indent">location: <span class="string">'Viña del Mar, Chile'</span>,</div>
+                        <div class="code-line indent">languages: {Spanish: <span class="string">'native'</span>, English: <span
+                                class="string">'professional'</span>, French: <span class="string">'learning'</span>},</div>
+                        <div class="code-line indent">stack: [<span class="string">'PHP'</span>, <span
+                                class="string">'Python'</span>, <span class="string">'TypeScript'</span>, <span
+                                class="string">'React'</span>, <span class="string">'Next.js'</span>, <span
+                                class="string">'FastAPI'</span>, <span class="string">'Node.js'</span>, <span
+                                class="string">'PostgreSQL'</span>, <span class="string">'Docker'</span>],</div>
+                        <div class="code-line indent">interests: [<span class="string">'Back-end'</span>, <span
+                                class="string">'Process Automation'</span>, <span class="string">'Web Scraping'</span>,
+                            <span class="string">'AI & RAG'</span>, <span class="string">'Game Dev'</span>]
+                        </div>
+                        <div class="code-line">};</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="about">
+            <div class="section-container">
+                <h2 class="section-title" data-i18n="about_title"></h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p data-i18n="about_text"></p>
+                        <div class="skills">
+                            <h3 data-i18n="skills_title"></h3>
+                            <div class="skill-tags">
+                                <span class="skill-tag">PHP</span>
+                                <span class="skill-tag">Python</span>
+                                <span class="skill-tag">JavaScript</span>
+                                <span class="skill-tag">TypeScript</span>
+                                <span class="skill-tag">Java</span>
+                                <span class="skill-tag">C</span>
+                                <span class="skill-tag">SQL</span>
+                                <span class="skill-tag">React</span>
+                                <span class="skill-tag">Next.js</span>
+                                <span class="skill-tag">Angular</span>
+                                <span class="skill-tag">Ionic</span>
+                                <span class="skill-tag">Tailwind CSS</span>
+                                <span class="skill-tag">Node.js</span>
+                                <span class="skill-tag">FastAPI</span>
+                                <span class="skill-tag">LLM / RAG</span>
+                                <span class="skill-tag">PostgreSQL</span>
+                                <span class="skill-tag">Firebase</span>
+                                <span class="skill-tag">Docker</span>
+                                <span class="skill-tag">Git</span>
+                                <span class="skill-tag">Linux</span>
+                                <span class="skill-tag">Web Scraping</span>
+                                <span class="skill-tag">Playwright</span>
+                                <span class="skill-tag">Three.js</span>
+                                <span class="skill-tag">Godot</span>
+                                <span class="skill-tag">LibGDX</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="about-stats">
+                        <div class="stat">
+                            <div class="stat-number">6+</div>
+                            <div class="stat-label" data-i18n="stat_exp"></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number" data-count="projects">14</div>
+                            <div class="stat-label" data-i18n="stat_proj"></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">3</div>
+                            <div class="stat-label" data-i18n="stat_sat"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="experience" class="experience">
+            <div class="section-container">
+                <h2 class="section-title" data-i18n="exp_title"></h2>
+                <div class="timeline">
+                    <article class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-card">
+                            <div class="timeline-header">
+                                <div>
+                                    <h3 class="timeline-role" data-i18n="exp1_role"></h3>
+                                    <p class="timeline-org">Global Reefers · <span data-i18n="exp_location_vina"></span></p>
+                                </div>
+                                <span class="timeline-date" data-i18n="exp1_date"></span>
+                            </div>
+                            <ul class="timeline-points">
+                                <li data-i18n="exp1_p1"></li>
+                                <li data-i18n="exp1_p2"></li>
+                                <li data-i18n="exp1_p3"></li>
+                            </ul>
+                            <div class="project-tech">
+                                <span class="tech-tag">PHP</span>
+                                <span class="tech-tag">JavaScript</span>
+                                <span class="tech-tag">SQL</span>
+                                <span class="tech-tag">Python</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-card">
+                            <div class="timeline-header">
+                                <div>
+                                    <h3 class="timeline-role" data-i18n="exp2_role"></h3>
+                                    <p class="timeline-org">Global Reefers · <span data-i18n="exp_location_vina"></span></p>
+                                </div>
+                                <span class="timeline-date" data-i18n="exp2_date"></span>
+                            </div>
+                            <ul class="timeline-points">
+                                <li data-i18n="exp2_p1"></li>
+                                <li data-i18n="exp2_p2"></li>
+                                <li data-i18n="exp2_p3"></li>
+                            </ul>
+                            <div class="project-tech">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">Web Scraping</span>
+                                <span class="tech-tag">PHP</span>
+                                <span class="tech-tag">SQL</span>
+                                <span class="tech-tag">REST API</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-card">
+                            <div class="timeline-header">
+                                <div>
+                                    <h3 class="timeline-role" data-i18n="exp3_role"></h3>
+                                    <p class="timeline-org">Pontificia Universidad Católica de Valparaíso</p>
+                                </div>
+                                <span class="timeline-date" data-i18n="exp3_date"></span>
+                            </div>
+                            <ul class="timeline-points">
+                                <li data-i18n="exp3_p1"></li>
+                            </ul>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="certifications">
+                    <h3 data-i18n="cert_title"></h3>
+                    <ul class="cert-list">
+                        <li><i class="fas fa-certificate"></i> Introducción a la Ciencia de Datos</li>
+                        <li><i class="fas fa-certificate"></i> CCNA: Introduction to Networks</li>
+                        <li><i class="fas fa-certificate"></i> Aprende SQL — Curso completo</li>
+                        <li><i class="fas fa-certificate"></i> Cursor con Python: desarrollo inteligente con IA</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="projects">
+            <div class="section-container">
+                <h2 class="section-title" data-i18n="projects_title"></h2>
+                <div class="projects-grid">
+                    <div class="project-card">
+                        <div class="project-image"><img src="assets/projects/project14.webp" width="800" height="547" loading="lazy" decoding="async" alt="Captura del proyecto"></div>
+                        <div class="project-content">
+                            <h3 class="project-title" data-i18n="project14_title"></h3>
+                            <p class="project-description" data-i18n="project14_desc"></p>
+                            <div class="project-footer">
+                                <div class="project-tech">
+                                    <span class="tech-tag">Python</span>
+                                    <span class="tech-tag">FastAPI</span>
+                                    <span class="tech-tag">PostgreSQL</span>
+                                    <span class="tech-tag">RAG</span>
+                                    <span class="tech-tag">LLM</span>
+                                    <span class="tech-tag">HTMX</span>
+                                </div>
+                                <div class="project-links">
+                                    <a href="https://github.com/VicenteCLeon/Studify" target="_blank"
+                                        class="project-link"><i class="fab fa-github"></i> <span
+                                            data-i18n="project_code"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-image"><img src="assets/projects/project02.webp" width="800" height="547" loading="lazy" decoding="async" alt="Captura del proyecto"></div>
+                        <div class="project-content">
+                            <h3 class="project-title" data-i18n="project2_title"></h3>
+                            <p class="project-description" data-i18n="project2_desc"></p>
+                            <div class="project-footer">
+                                <div class="project-tech">
+                                    <span class="tech-tag">React</span>
+                                    <span class="tech-tag">Python</span>
+                                    <span class="tech-tag">FastAPI</span>
+                                    <span class="tech-tag">ChromaDB</span>
+                                    <span class="tech-tag">RAG</span>
+                                    <span class="tech-tag">Docker</span>
+                                </div>
+                                <div class="project-links">
+                                    <a href="https://github.com/PytricioPUCV/MARC-IA-Project" target="_blank"
+                                        class="project-link"><i class="fab fa-github"></i> <span
+                                            data-i18n="project_code"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-image"><img src="assets/projects/project06.webp" width="800" height="547" loading="lazy" decoding="async" alt="Captura del proyecto"></div>
+                        <div class="project-content">
+                            <h3 class="project-title" data-i18n="project6_title"></h3>
+                            <p class="project-description" data-i18n="project6_desc"></p>
+                            <div class="project-footer">
+                                <div class="project-tech">
+                                    <span class="tech-tag">Next.js</span>
+                                    <span class="tech-tag">Three.js</span>
+                                    <span class="tech-tag">AI</span>
+                                </div>
+                                <div class="project-links">
+                                    <a href="https://github.com/Mx4-2V/intervee" target="_blank" class="project-link"><i
+                                            class="fab fa-github"></i> <span data-i18n="project_code"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-image"><img src="assets/projects/project12.webp" width="800" height="547" loading="lazy" decoding="async" alt="Captura del proyecto"></div>
+                        <div class="project-content">
+                            <h3 class="project-title" data-i18n="project12_title"></h3>
+                            <p class="project-description" data-i18n="project12_desc"></p>
+                            <div class="project-footer">
+                                <div class="project-tech">
+                                    <span class="tech-tag">Next.js</span>
+                                    <span class="tech-tag">TypeScript</span>
+                                    <span class="tech-tag">FastAPI</span>
+                                    <span class="tech-tag">PostgreSQL</span>
+                                </div>
+                                <div class="project-links">
+                                    <span class="project-link project-private"><i class="fas fa-lock"></i> <span
+                                            data-i18n="project_private"></span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-image"><img src="assets/projects/project07.webp" width="800" height="547" loading="lazy" decoding="async" alt="Captura del proyecto"></div>
+                        <div class="project-content">
+                            <h3 class="project-title" data-i18n="project7_title"></h3>
+                            <p class="project-description" data-i18n="project7_desc"></p>
+                            <div class="project-footer">
+                                <div class="project-tech">
+                                    <span class="tech-tag">Ionic</span>
+                                    <span class="tech-tag">Angular</span>
+                                    <span class="tech-tag">Node.js</span>
+                                    <span class="tech-tag">PostgreSQL</span>
+                                    <span class="tech-tag">Docker</span>
+                                </div>
+                                <div class="project-links">
+                                    <a href="https://github.com/PytricioPUCV/Racing_Web_Ionic" target="_blank"
+                                        class="project-link"><i class="fab fa-github"></i> <span
+                                            data-i18n="project_code"></span></a>
+                                    <a href="https://racing-web-ionic.vercel.app/home" target="_blank"
+                                        class="project-link"><i class="fas fa-globe"></i> <span
+                                            data-i18n="project_demo"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-image"><img src="assets/projects/project11.webp" width="800" height="547" loading="lazy" decoding="async" alt="Captura del proyecto"></div>
+                        <div class="project-content">
+                            <h3 class="project-title" data-i18n="project11_title"></h3>
+                            <p class="project-description" data-i18n="project11_desc"></p>
+                            <div class="project-footer">
+                                <div class="project-tech">
+                                    <span class="tech-tag">React</span>
+                                    <span class="tech-tag">TypeScript</span>
+                                    <span class="tech-tag">Vite</span>
+                                    <span class="tech-tag">Tailwind CSS</span>
+                                </div>
+                                <div class="project-links">
+                                    <a href="https://perfume-decants.vercel.app" target="_blank"
+                                        class="project-link"><i class="fas fa-globe"></i> <span
+                                            data-i18n="project_demo"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-image"><img src="assets/projects/project01.webp" width="800" height="547" loading="lazy" decoding="async" alt="Captura del proyecto"></div>
+                        <div class="project-content">
+                            <h3 class="project-title" data-i18n="project1_title"></h3>
+                            <p class="project-description" data-i18n="project1_desc"></p>
+                            <div class="project-footer">
+                                <div class="project-tech">
+                                    <span class="tech-tag">HTML5</span>
+                                    <span class="tech-tag">CSS3</span>
+                                    <span class="tech-tag">JavaScript</span>
+                                    <span class="tech-tag">Firebase</span>
+                                </div>
+                                <div class="project-links">
+                                    <span class="project-link project-private"><i class="fas fa-lock"></i> <span
+                                            data-i18n="project_private"></span></span>
+                                    <a href="https://university-planner-one.vercel.app/" target="_blank"
+                                        class="project-link"><i class="fas fa-globe"></i> <span
+                                            data-i18n="project_demo"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-image"><img src="assets/projects/project10.webp" width="800" height="547" loading="lazy" decoding="async" alt="Captura del proyecto"></div>
+                        <div class="project-content">
+                            <h3 class="project-title" data-i18n="project10_title"></h3>
+                            <p class="project-description" data-i18n="project10_desc"></p>
+                            <div class="project-footer">
+                                <div class="project-tech">
+                                    <span class="tech-tag">Python</span>
+                                    <span class="tech-tag">JavaScript</span>
+                                    <span class="tech-tag">Web Panel</span>
+                                    <span class="tech-tag">Windows</span>
+                                </div>
+                                <div class="project-links">
+                                    <a href="https://github.com/PytricioPUCV/ACC-Dedicated-Server-AdminPanel" target="_blank"
+                                        class="project-link"><i class="fab fa-github"></i> <span
+                                            data-i18n="project_code"></span></a>
+                                    <a href="https://acc-server-panel.github.io/" target="_blank"
+                                        class="project-link"><i class="fas fa-globe"></i> <span
+                                            data-i18n="project_demo"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-image"><img src="assets/projects/project03.webp" width="800" height="547" loading="lazy" decoding="async" alt="Captura del proyecto"></div>
+                        <div class="project-content">
+                            <h3 class="project-title" data-i18n="project3_title"></h3>
+                            <p class="project-description" data-i18n="project3_desc"></p>
+                            <div class="project-footer">
+                                <div class="project-tech">
+                                    <span class="tech-tag">Java</span>
+                                    <span class="tech-tag">OOP</span>
+                                    <span class="tech-tag">Backend</span>
+                                </div>
+                                <div class="project-links">
+                                    <a href="https://github.com/PytricioPUCV/inmobiliariaJava" target="_blank"
+                                        class="project-link"><i class="fab fa-github"></i> <span
+                                            data-i18n="project_code"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-image"><img src="assets/projects/project13.webp" width="800" height="547" loading="lazy" decoding="async" alt="Captura del proyecto"></div>
+                        <div class="project-content">
+                            <h3 class="project-title" data-i18n="project13_title"></h3>
+                            <p class="project-description" data-i18n="project13_desc"></p>
+                            <div class="project-footer">
+                                <div class="project-tech">
+                                    <span class="tech-tag">HTML5</span>
+                                    <span class="tech-tag">CSS3</span>
+                                    <span class="tech-tag">JavaScript</span>
+                                    <span class="tech-tag">SVG</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-image"><img src="assets/projects/project04.webp" width="800" height="547" loading="lazy" decoding="async" alt="Captura del proyecto"></div>
+                        <div class="project-content">
+                            <h3 class="project-title" data-i18n="project4_title"></h3>
+                            <p class="project-description" data-i18n="project4_desc"></p>
+                            <div class="project-footer">
+                                <div class="project-tech">
+                                    <span class="tech-tag">C</span>
+                                    <span class="tech-tag">Shell</span>
+                                </div>
+                                <div class="project-links">
+                                    <a href="https://github.com/PytricioPUCV/FarmaSalud" target="_blank"
+                                        class="project-link"><i class="fab fa-github"></i> <span
+                                            data-i18n="project_code"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-image"><img src="assets/projects/project05.webp" width="800" height="547" loading="lazy" decoding="async" alt="Captura del proyecto"></div>
+                        <div class="project-content">
+                            <h3 class="project-title" data-i18n="project5_title"></h3>
+                            <p class="project-description" data-i18n="project5_desc"></p>
+                            <div class="project-footer">
+                                <div class="project-tech">
+                                    <span class="tech-tag">Godot</span>
+                                    <span class="tech-tag">GDScript</span>
+                                    <span class="tech-tag">GameDev</span>
+                                </div>
+                                <div class="project-links">
+                                    <a href="https://github.com/ItsRigozzi/Pixel-Pointers" target="_blank"
+                                        class="project-link"><i class="fab fa-github"></i> <span
+                                            data-i18n="project_code"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-image"><img src="assets/projects/project08.webp" width="800" height="547" loading="lazy" decoding="async" alt="Captura del proyecto"></div>
+                        <div class="project-content">
+                            <h3 class="project-title" data-i18n="project8_title"></h3>
+                            <p class="project-description" data-i18n="project8_desc"></p>
+                            <div class="project-footer">
+                                <div class="project-tech">
+                                    <span class="tech-tag">Java</span>
+                                    <span class="tech-tag">LibGDX</span>
+                                    <span class="tech-tag">GameDev</span>
+                                </div>
+                                <div class="project-links">
+                                    <a href="https://github.com/PytricioPUCV/PirateAdventures" target="_blank"
+                                        class="project-link"><i class="fab fa-github"></i> <span
+                                            data-i18n="project_code"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-image"><img src="assets/projects/project09.webp" width="800" height="547" loading="lazy" decoding="async" alt="Captura del proyecto"></div>
+                        <div class="project-content">
+                            <h3 class="project-title" data-i18n="project9_title"></h3>
+                            <p class="project-description" data-i18n="project9_desc"></p>
+                            <div class="project-footer">
+                                <div class="project-tech">
+                                    <span class="tech-tag">Python</span>
+                                    <span class="tech-tag">Tkinter</span>
+                                    <span class="tech-tag">Playwright</span>
+                                </div>
+                                <div class="project-links">
+                                    <a href="https://github.com/PytricioPUCV/PUCV-Practice/blob/main/Workspace/Python/html_a_pdf.py"
+                                        target="_blank" class="project-link"><i class="fab fa-github"></i> <span
+                                            data-i18n="project_code"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact">
+            <div class="section-container">
+                <h2 class="section-title" data-i18n="contact_title"></h2>
+                <div class="contact-content">
+                    <div class="contact-text">
+                        <p data-i18n="contact_text1"></p>
+                        <p data-i18n="contact_text2"></p>
+                        <p data-i18n="contact_text3"></p>
+                    </div>
+                    <div class="contact-methods">
+                        <div class="contact-method">
+                            <span class="contact-link" data-i18n="location"></span>
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-method">
+                            <span><a href="mailto:patricio.elias.hernandez.vergara@gmail.com" class="contact-link-email"
+                                    data-i18n="contact_email">patricio.elias.hernandez.vergara@gmail.com</a></span>
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-method">
+                            <span><a href="https://github.com/PytricioPUCV" target="_blank"
+                                    class="contact-link">GitHub</a></span>
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <div class="contact-method">
+                            <span><a href="https://www.linkedin.com/in/patricio-elias-hernandez" target="_blank"
+                                    class="contact-link">LinkedIn</a></span>
+                            <i class="fab fa-linkedin"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="footer-section">
+            <footer class="footer">
+                <div class="footer-content">
+                    <div class="social-links">
+                        <a href="https://github.com/PytricioPUCV" target="_blank" rel="noopener" class="social-link"
+                            aria-label="GitHub"><i class="fab fa-github" aria-hidden="true"></i></a>
+                        <a href="https://www.linkedin.com/in/patricio-elias-hernandez" target="_blank" rel="noopener"
+                            class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin" aria-hidden="true"></i></a>
+                        <a href="https://www.instagram.com/patricio.e.hernandez/" target="_blank" rel="noopener"
+                            class="social-link" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                    </div>
+                    <div class="footer-text">
+                        <p><span data-i18n="footer_dev">Developed by</span> <a href="https://github.com/PytricioPUCV" target="_blank"
+                                class="contact-link">PytricioPUCV</a></p>
+                    </div>
+                </div>
+            </footer>
+        </section>
+        <div class="contact-gradient-bottom"></div>
+    </div>
+    <script src="scripts/main.js"></script>
+</body>
+
+</html>

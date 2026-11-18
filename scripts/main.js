@@ -1,0 +1,801 @@
+(function () {
+    const canvas = document.getElementById('star-bg');
+    const ctx = canvas.getContext('2d');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Celulares y equipos modestos: menos estrellas, sin sombras y a 30 fps
+    const lowPower = window.innerWidth < 768 || (navigator.hardwareConcurrency || 8) <= 4;
+    let width = 0;
+    let height = 0;
+    let stars = [];
+    let comets = [];
+    let shootingStars = [];
+    let isPageVisible = !document.hidden;
+    let cometTimer;
+    let shootingTimer;
+    let frame = 0;
+
+    function randomBetween(a, b) {
+        return a + Math.random() * (b - a);
+    }
+
+    function isDarkMode() {
+        return localStorage.getItem('theme') !== 'light';
+    }
+
+    function r_canvas() {
+        const dpr = lowPower ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        createStars();
+    }
+
+    // Campo de estrellas: titilan y se desplazan levemente con el scroll (parallax)
+    function createStars() {
+        const count = Math.min(lowPower ? 90 : 260, Math.round((width * height) / 7000));
+        stars = [];
+        for (let i = 0; i < count; i++) {
+            const bright = Math.random() < 0.06;
+            stars.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                r: bright ? randomBetween(1.2, 1.8) : randomBetween(0.3, 1.1),
+                base: bright ? randomBetween(0.7, 1) : randomBetween(0.15, 0.6),
+                speed: randomBetween(0.01, 0.04),
+                phase: Math.random() * Math.PI * 2,
+                depth: randomBetween(0.02, 0.12),
+                bright
+            });
+        }
+    }
+
+    function drawStars() {
+        const dark = isDarkMode();
+        const color = dark ? '255, 255, 255' : '70, 90, 130';
+        const scroll = reducedMotion ? 0 : window.scrollY;
+        for (const s of stars) {
+            const twinkle = reducedMotion ? 1 : 0.6 + 0.4 * Math.sin(frame * s.speed + s.phase);
+            const alpha = s.base * twinkle * (dark ? 1 : 0.5);
+            const y = (((s.y - scroll * s.depth) % height) + height) % height;
+            ctx.beginPath();
+            ctx.arc(s.x, y, s.r, 0, 2 * Math.PI);
+            ctx.fillStyle = `rgba(${color}, ${alpha})`;
+            if (s.bright && dark && !lowPower) {
+                ctx.shadowColor = 'rgba(0, 191, 255, 0.8)';
+                ctx.shadowBlur = 6;
+            }
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    function createComet() {
+        const angle = randomBetween(Math.PI / 4, Math.PI / 3);
+        const speed = randomBetween(5, 9);
+        return {
+            x: randomBetween(width * 0.3, width * 1.05),
+            y: -20,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            alpha: 1,
+            trail: []
+        };
+    }
+
+    function updateComets() {
+        for (const comet of comets) {
+            comet.trail.push({ x: comet.x, y: comet.y, alpha: comet.alpha });
+            if (comet.trail.length > 40) comet.trail.shift();
+            comet.x += comet.vx;
+            comet.y += comet.vy;
+            comet.alpha *= 0.985;
+        }
+        comets = comets.filter(c => c.y < height + 100 && c.alpha > 0.05);
+    }
+
+    function drawComets() {
+        const trailStart = isDarkMode() ? { r: 0, g: 120, b: 255 } : { r: 0, g: 51, b: 102 };
+        const trailEnd = { r: 0, g: 191, b: 255 };
+
+        for (const comet of comets) {
+            for (let i = 0; i < comet.trail.length; i++) {
+                const t = comet.trail[i];
+                const ratio = i / comet.trail.length;
+                const r = Math.round(trailStart.r + (trailEnd.r - trailStart.r) * ratio);
+                const g = Math.round(trailStart.g + (trailEnd.g - trailStart.g) * ratio);
+                const b = Math.round(trailStart.b + (trailEnd.b - trailStart.b) * ratio);
+                const color = `rgb(${r},${g},${b})`;
+                ctx.save();
+                ctx.globalAlpha = t.alpha * 0.25 * ratio;
+                ctx.beginPath();
+                ctx.arc(t.x, t.y, 3, 0, 2 * Math.PI);
+                ctx.fillStyle = color;
+                if (!lowPower) {
+                    ctx.shadowColor = color;
+                    ctx.shadowBlur = 8;
+                }
+                ctx.fill();
+                ctx.restore();
+            }
+            ctx.save();
+            ctx.globalAlpha = comet.alpha;
+            ctx.beginPath();
+            ctx.arc(comet.x, comet.y, 5, 0, 2 * Math.PI);
+            ctx.fillStyle = '#fff';
+            ctx.shadowColor = '#fff';
+            ctx.shadowBlur = 16;
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    // Estrellas fugaces: trazos finos y rápidos, más sutiles que los cometas
+    function createShootingStar() {
+        const angle = randomBetween(Math.PI * 0.72, Math.PI * 0.85);
+        const speed = randomBetween(14, 20);
+        return {
+            x: randomBetween(width * 0.2, width),
+            y: randomBetween(0, height * 0.5),
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            length: randomBetween(90, 170),
+            life: 0,
+            maxLife: Math.round(randomBetween(28, 42))
+        };
+    }
+
+    function updateShootingStars() {
+        for (const s of shootingStars) {
+            s.x += s.vx;
+            s.y += s.vy;
+            s.life++;
+        }
+        shootingStars = shootingStars.filter(s => s.life < s.maxLife);
+    }
+
+    function drawShootingStars() {
+        const color = isDarkMode() ? '255, 255, 255' : '0, 90, 180';
+        for (const s of shootingStars) {
+            const progress = s.life / s.maxLife;
+            const alpha = Math.sin(progress * Math.PI) * 0.9;
+            const speed = Math.hypot(s.vx, s.vy);
+            const tailX = s.x - (s.vx / speed) * s.length;
+            const tailY = s.y - (s.vy / speed) * s.length;
+            const gradient = ctx.createLinearGradient(s.x, s.y, tailX, tailY);
+            gradient.addColorStop(0, `rgba(${color}, ${alpha})`);
+            gradient.addColorStop(1, `rgba(${color}, 0)`);
+            ctx.beginPath();
+            ctx.moveTo(s.x, s.y);
+            ctx.lineTo(tailX, tailY);
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = 1.5;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+    }
+
+    // En modo liviano se dibuja 1 de cada 2 cuadros y la lógica avanza 2 pasos,
+    // así la velocidad de cometas y estrellas fugaces no cambia
+    const stepsPerFrame = lowPower ? 2 : 1;
+    let skipFrame = false;
+
+    function anim() {
+        requestAnimationFrame(anim);
+        if (lowPower) {
+            skipFrame = !skipFrame;
+            if (skipFrame) return;
+        }
+        for (let i = 0; i < stepsPerFrame; i++) {
+            frame++;
+            updateShootingStars();
+            updateComets();
+        }
+        ctx.clearRect(0, 0, width, height);
+        drawStars();
+        drawShootingStars();
+        drawComets();
+    }
+
+    function scheduleComets(delay) {
+        cometTimer = setTimeout(() => {
+            if (isPageVisible) {
+                const n = Math.floor(randomBetween(1, 3));
+                for (let i = 0; i < n; i++) {
+                    setTimeout(() => comets.push(createComet()), i * 400);
+                }
+            }
+            scheduleComets(randomBetween(3000, 7000));
+        }, delay);
+    }
+
+    function scheduleShootingStars(delay) {
+        shootingTimer = setTimeout(() => {
+            if (isPageVisible) shootingStars.push(createShootingStar());
+            scheduleShootingStars(randomBetween(2000, 5000));
+        }, delay);
+    }
+
+    function startEffects() {
+        clearTimeout(cometTimer);
+        clearTimeout(shootingTimer);
+        scheduleComets(1200);
+        scheduleShootingStars(2500);
+    }
+
+    function handleVisibilityChange() {
+        isPageVisible = !document.hidden;
+        if (isPageVisible) {
+            comets = [];
+            shootingStars = [];
+            startEffects();
+        } else {
+            clearTimeout(cometTimer);
+            clearTimeout(shootingTimer);
+        }
+    }
+
+    window.addEventListener('resize', r_canvas);
+    r_canvas();
+
+    if (reducedMotion) {
+        // Sin animación: solo el cielo estático, redibujado al cambiar de tema
+        const drawStatic = () => { ctx.clearRect(0, 0, width, height); drawStars(); };
+        drawStatic();
+        window.addEventListener('resize', drawStatic);
+        document.addEventListener('click', e => {
+            if (e.target.closest('#theme-toggle-btn')) setTimeout(drawStatic, 0);
+        });
+        return;
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    anim();
+    startEffects();
+})();
+
+const translations = {
+    es: {
+        name: "Patricio",
+        nav_home: "Inicio",
+        nav_about: "Sobre mí",
+        nav_projects: "Proyectos",
+        nav_contact: "Contacto",
+        greeting: "Hola, soy",
+        title: "Desarrollador full stack",
+        hero_desc: "Desarrollo web, back-end con PHP y Python, y automatización de procesos.",
+        btn_cv_view: "Ver CV",
+        cv_file: "assets/cv/CV-Patricio-Hernandez-Vergara.pdf",
+        cv_download_name: "CV Patricio Hernández Vergara.pdf",
+        btn_cv_download: "Descargar CV",
+        about_title: "Sobre mí",
+        about_text: `Soy desarrollador full stack enfocado en el back-end, la automatización de procesos y el web scraping. En Global Reefers, empresa líder en logística de exportación de fruta, hice mi práctica profesional y luego trabajé como desarrollador full stack junior, principalmente con PHP, automatizaciones en Python y web scraping. También trabajo con TypeScript, React y la integración de modelos de inteligencia artificial.<br><br>A los 15 años comencé a estudiar programación de forma autodidacta, partiendo por el desarrollo web. Esto me permitió adquirir habilidades analíticas y de resolución de problemas desde temprano.<br><br>Actualmente curso el último año de Ingeniería en Informática en la PUCV, enfocado en el desarrollo de software a nivel profesional y la aplicación práctica de conocimientos técnicos.`,
+        skills_title: "Habilidades",
+        stat_exp: "Años programando",
+        stat_proj: "Proyectos en este portafolio",
+        stat_sat: "Idiomas: español nativo, inglés profesional y francés en aprendizaje",
+        projects_title: "Proyectos",
+        contact_title: "Contáctame",
+        contact_text1: "¿Tienes un proyecto o una oportunidad en mente? Me encantaría saber de ella. Siempre estoy abierto a nuevas oportunidades laborales y colaboraciones.",
+        contact_text2: "Contáctame a través de mis redes sociales o escríbeme directamente a <a href='mailto:patricio.elias.hernandez.vergara@gmail.com' class='contact-link-email'>patricio.elias.hernandez.vergara@gmail.com</a>",
+        contact_text3: "— Patricio",
+        location: "Viña del Mar, Chile",
+        contact_email: "patricio.elias.hernandez.vergara@gmail.com",
+        project_code: "Código",
+        project_demo: "Ver demo",
+        footer_dev: "Desarrollado por",
+        theme_toggle: "Cambiar tema",
+        lang_toggle: "Cambiar idioma",
+        project1_title: "Planner Universitario PUCV",
+        project1_desc: "Aplicación web para gestionar horarios académicos y evaluaciones de la PUCV, con sincronización en la nube mediante Firebase Firestore. Interfaz responsive para usarla desde cualquier dispositivo.",
+        project2_title: "MARC-IA",
+        project2_desc: "Asistente virtual basado en tecnología RAG para entregar orientación institucional a estudiantes de la Pontificia Universidad Católica de Valparaíso.",
+        project3_title: "Gestión Inmobiliaria",
+        project3_desc: "Sistema de gestión de ventas de departamentos. Administra la relación entre la demanda y la variación de precios, simulando condiciones del mercado inmobiliario. Proyecto universitario en equipo.",
+        project4_title: "FarmaSalud",
+        project4_desc: "Sistema de gestión de farmacias desde una terminal, proyecto desarrollado en C. Permite la administración de clientes, proveedores, sucursales y productos, incluyendo módulos de compras y generación de informes de ventas.",
+        project5_title: "Pixel Pointers",
+        project5_desc: "Videojuego educativo 2D con perspectiva top-down desarrollado en Godot Engine. Incluye misiones, acertijos y evaluaciones mediante combates de jefes para enseñar conceptos técnicos, programado en GDScript. Proyecto universitario en equipo.",
+        project6_title: "Intervee",
+        project6_desc: "Plataforma de simulación de entrevistas con un entorno 3D interactivo. Desarrollada con Next.js y Three.js, permite a los usuarios explorar una ciudad virtual y realizar entrevistas evaluadas por inteligencia artificial. Proyecto en equipo.",
+        project7_title: "Racing Web",
+        project7_desc: "E-commerce inspirado en la cultura automovilística. Desarrollado con Ionic y Angular en el frontend, y Node.js con PostgreSQL en el backend, implementando una arquitectura segura y basada en contenedores. Proyecto en equipo.",
+        project8_title: "Pirate Adventures",
+        project8_desc: "Videojuego de aventuras en 2D desarrollado en Java utilizando el framework LibGDX. El jugador controla a un personaje que debe recolectar objetos mientras evita obstáculos y penalizaciones.",
+        project9_title: "Conversor HTML a PDF",
+        project9_desc: "Aplicación de escritorio con interfaz gráfica desarrollada en Python para convertir archivos HTML locales a PDF. Utiliza Playwright para conservar estilos CSS e imágenes, ofreciendo opciones de tamaño y orientación.",
+        project10_title: "ACC Server Admin Panel",
+        project10_desc: "Panel de administración web y rotador automático de pistas para el servidor dedicado de Assetto Corsa Competizione. Configura sesiones, clima y entry list desde formularios, muestra telemetría en tiempo real y se distribuye como ejecutable listo para usar.",
+        project11_title: "Decants del Puerto",
+        project11_desc: "Tienda online de decants de perfumes de diseñador y árabes. Catálogo con buscador, carrito persistente y pedidos enviados por WhatsApp, desarrollada con React, TypeScript y Tailwind CSS.",
+        project12_title: "Hoy Qué Cocino",
+        project12_desc: "Aplicación web mobile-first de meal prep basada en el método del plato. Propone combinaciones de alimentos según la dieta y restricciones del usuario, con una API REST en FastAPI, base de datos PostgreSQL y pruebas automatizadas.",
+        project13_title: "FitPlanner",
+        project13_desc: "Planificador personal de entrenamiento y nutrición. Incluye rutina semanal, registro de series con temporizador de descanso, menú con calorías y gráficos de progreso de peso y fuerza, todo guardado en el dispositivo.",
+        project14_title: "Studify",
+        project14_desc: "Proyecto de título. Plataforma de micro-aprendizaje que genera contenido educativo personalizado con IA según el perfil de aprendizaje VARK del estudiante. Usa un RAG estructurado con recuperación determinista en SQL, trazable hasta la página fuente, y valida las respuestas del LLM con Pydantic para detectar citas alucinadas. Desarrollado junto a Vicente Cisternas.",
+        project_private: "Repositorio privado",
+        menu_label: "Menú",
+        show_more: "Ver más",
+        show_less: "Ver menos",
+        projects_all: "Ver los {n} proyectos",
+        projects_less: "Mostrar menos proyectos",
+        project_screenshot: "Captura de",
+        nav_experience: "Experiencia",
+        exp_title: "Experiencia",
+        exp_location_vina: "Viña del Mar",
+        exp1_role: "Desarrollador Full Stack Junior",
+        exp1_date: "feb. 2026 – mar. 2026",
+        exp1_p1: "Desarrollo y mantenimiento de plataformas corporativas en un rol full stack con PHP, JavaScript y SQL, apoyando proyectos estratégicos del área TI.",
+        exp1_p2: "Diseño de herramientas de automatización de datos en Python.",
+        exp1_p3: "Implementación técnica de nuevas funcionalidades y soporte en el despliegue de sistemas, asegurando la continuidad operativa.",
+        exp2_role: "Práctica profesional · Ingeniería en Informática",
+        exp2_date: "dic. 2025 – feb. 2026",
+        exp2_p1: "Automatización de la extracción de datos mediante web scraping con Python, integrando flujos de información críticos para el negocio.",
+        exp2_p2: "Desarrollo en PHP de módulos de tracking y generación de enlaces compartidos (sharelinks) para la plataforma corporativa, incluyendo el diseño de la base de datos y la creación de endpoints.",
+        exp2_p3: "Documentación técnica de los procedimientos y desarrollos para asegurar la mantenibilidad de los sistemas.",
+        exp3_role: "Ingeniería en Informática",
+        exp3_date: "mar. 2023 – dic. 2026",
+        exp3_p1: "Último año de la carrera. Proyecto de título: Studify, plataforma de micro-aprendizaje adaptativo con IA generativa y RAG.",
+        cert_title: "Certificaciones",
+    },
+    en: {
+        name: "Patricio",
+        nav_home: "Home",
+        nav_about: "About me",
+        nav_projects: "Projects",
+        nav_contact: "Contact",
+        greeting: "Hello, I'm",
+        title: "Full-stack developer",
+        hero_desc: "Web development, PHP and Python back-end, and process automation.",
+        btn_cv_view: "View CV",
+        cv_file: "assets/cv/CV-Patricio-Hernandez-Vergara-EN.pdf",
+        cv_download_name: "Resume Patricio Hernández Vergara.pdf",
+        btn_cv_download: "Download CV",
+        about_title: "About me",
+        about_text: `I am a full-stack developer focused on back-end development, process automation and web scraping. At Global Reefers, a leading fruit export logistics company, I completed my professional internship and then worked as a junior full-stack developer, mainly with PHP, Python automations and web scraping. I also work with TypeScript, React and the integration of artificial intelligence models.<br><br>At the age of 15, I began learning programming on my own, starting with web development. This allowed me to build analytical and problem-solving skills from an early age.<br><br>I am currently in my final year of Computer Science at PUCV, focused on professional software development and the practical application of technical knowledge.`,
+        skills_title: "Skills",
+        stat_exp: "Years coding",
+        stat_proj: "Projects in this portfolio",
+        stat_sat: "Languages: native Spanish, professional English and French (learning)",
+        projects_title: "Projects",
+        contact_title: "Contact me",
+        contact_text1: "Have a project or an opportunity in mind? I'd love to hear about it. I'm always open to new job opportunities and collaborations.",
+        contact_text2: "Contact me through my social networks or email me directly at <a href='mailto:patricio.elias.hernandez.vergara@gmail.com' class='contact-link-email'>patricio.elias.hernandez.vergara@gmail.com</a>",
+        contact_text3: "— Patricio",
+        location: "Viña del Mar, Chile",
+        contact_email: "patricio.elias.hernandez.vergara@gmail.com",
+        project_code: "Code",
+        project_demo: "Live demo",
+        footer_dev: "Developed by",
+        theme_toggle: "Change theme",
+        lang_toggle: "Change language",
+        project1_title: "PUCV University Planner",
+        project1_desc: "Web application for managing academic schedules and evaluations at PUCV, with cloud sync through Firebase Firestore. Responsive interface for use on any device.",
+        project2_title: "MARC-IA",
+        project2_desc: "Virtual assistant based on RAG technology to provide institutional guidance to students at the Pontificia Universidad Católica de Valparaíso.",
+        project3_title: "Real Estate Management",
+        project3_desc: "Apartment sales management system. Manages the relationship between demand and price variation, simulating real estate market conditions. University team project.",
+        project4_title: "FarmaSalud",
+        project4_desc: "Terminal-based pharmacy management system (CLI, no GUI) developed in C. Enables administration of clients, suppliers, branches, and products, including purchasing modules and sales report generation.",
+        project5_title: "Pixel Pointers",
+        project5_desc: "2D top-down educational video game developed in Godot Engine. Includes quests, puzzles, and assessments through boss fights to teach technical concepts, programmed in GDScript. University team project.",
+        project6_title: "Intervee",
+        project6_desc: "Interview simulation platform with an interactive 3D environment. Developed with Next.js and Three.js, it allows users to explore a virtual city and conduct interviews evaluated by artificial intelligence. Team project.",
+        project7_title: "Racing Web",
+        project7_desc: "Automotive culture-inspired e-commerce platform. Developed with Ionic and Angular on the frontend, and Node.js with PostgreSQL on the backend, implementing a secure, containerized architecture. Team project.",
+        project8_title: "Pirate Adventures",
+        project8_desc: "2D adventure video game developed in Java using the LibGDX framework. The player controls a character who must collect items while avoiding obstacles and penalties.",
+        project9_title: "HTML to PDF Converter",
+        project9_desc: "Desktop application with a graphical interface developed in Python to convert local HTML files to PDF. Uses Playwright to preserve CSS styles and images, offering page size and orientation options.",
+        project10_title: "ACC Server Admin Panel",
+        project10_desc: "Web administration panel and automatic track rotator for the Assetto Corsa Competizione dedicated server. Configures sessions, weather and entry lists through forms, shows real-time telemetry and ships as a ready-to-use executable.",
+        project11_title: "Decants del Puerto",
+        project11_desc: "Online store for designer and Arabic perfume decants. Searchable catalog, persistent cart and orders sent via WhatsApp, built with React, TypeScript and Tailwind CSS.",
+        project12_title: "Hoy Qué Cocino",
+        project12_desc: "Mobile-first meal prep web app based on the plate method. Suggests food combinations according to the user's diet and restrictions, backed by a FastAPI REST API, a PostgreSQL database and automated tests.",
+        project13_title: "FitPlanner",
+        project13_desc: "Personal training and nutrition planner. Includes a weekly routine, set logging with a rest timer, a calorie-counted menu and weight and strength progress charts, all stored on the device.",
+        project14_title: "Studify",
+        project14_desc: "Capstone project. Micro-learning platform that uses AI to generate personalized educational content based on each student's VARK learning profile. Built on a structured RAG with deterministic SQL retrieval, traceable down to the source page, and validates LLM output with Pydantic to detect hallucinated citations. Developed with Vicente Cisternas.",
+        project_private: "Private repository",
+        menu_label: "Menu",
+        show_more: "Show more",
+        show_less: "Show less",
+        projects_all: "See all {n} projects",
+        projects_less: "Show fewer projects",
+        project_screenshot: "Screenshot of",
+        nav_experience: "Experience",
+        exp_title: "Experience",
+        exp_location_vina: "Viña del Mar",
+        exp1_role: "Junior Full Stack Developer",
+        exp1_date: "Feb 2026 – Mar 2026",
+        exp1_p1: "Developed and maintained corporate platforms in a full-stack role with PHP, JavaScript and SQL, supporting strategic IT projects.",
+        exp1_p2: "Designed data automation tools in Python.",
+        exp1_p3: "Handled the technical implementation of new features and supported system deployments, ensuring operational continuity.",
+        exp2_role: "Computer Science Intern",
+        exp2_date: "Dec 2025 – Feb 2026",
+        exp2_p1: "Automated data extraction through web scraping with Python, integrating business-critical information flows.",
+        exp2_p2: "Built PHP modules for tracking and shared-link (sharelink) generation on the corporate platform, including database design and endpoint development.",
+        exp2_p3: "Wrote technical documentation for procedures and developments to keep the systems maintainable.",
+        exp3_role: "Computer Science (Ingeniería en Informática)",
+        exp3_date: "Mar 2023 – Dec 2026",
+        exp3_p1: "Final year of the degree. Capstone project: Studify, an adaptive micro-learning platform powered by generative AI and RAG.",
+        cert_title: "Certifications",
+    },
+    fr: {
+        name: "Patricio",
+        nav_home: "Accueil",
+        nav_about: "À propos",
+        nav_projects: "Projets",
+        nav_contact: "Contact",
+        greeting: "Bonjour, je suis",
+        title: "Développeur full-stack",
+        hero_desc: "Développement web, back-end en PHP et Python, et automatisation de processus.",
+        btn_cv_view: "Voir le CV",
+        cv_file: "assets/cv/CV-Patricio-Hernandez-Vergara-FR.pdf",
+        cv_download_name: "CV Patricio Hernández Vergara (FR).pdf",
+        btn_cv_download: "Télécharger le CV",
+        about_title: "À propos de moi",
+        about_text: `Je suis un développeur full-stack spécialisé dans le back-end, l'automatisation de processus et le web scraping. Chez Global Reefers, entreprise leader de la logistique d'exportation de fruits, j'ai effectué mon stage professionnel puis travaillé comme développeur full-stack junior, principalement avec PHP, des automatisations en Python et le web scraping. Je travaille également avec TypeScript, React et l'intégration de modèles d'intelligence artificielle.<br><br>À l'âge de 15 ans, j'ai commencé à apprendre la programmation en autodidacte, en commençant par le développement web. Cela m'a permis d'acquérir très tôt des compétences analytiques et de résolution de problèmes.<br><br>Je suis actuellement en dernière année d'ingénierie informatique à la PUCV, concentré sur le développement professionnel de logiciels et l'application pratique des connaissances techniques.`,
+        skills_title: "Compétences",
+        stat_exp: "Années de programmation",
+        stat_proj: "Projets dans ce portfolio",
+        stat_sat: "Langues : espagnol natif, anglais professionnel et français en apprentissage",
+        projects_title: "Projets",
+        contact_title: "Contactez-moi",
+        contact_text1: "Vous avez un projet ou une opportunité en tête ? J'aimerais en entendre parler. Je suis toujours ouvert aux nouvelles opportunités professionnelles et collaborations.",
+        contact_text2: "Contactez-moi via mes réseaux sociaux ou écrivez-moi directement à <a href='mailto:patricio.elias.hernandez.vergara@gmail.com' class='contact-link-email'>patricio.elias.hernandez.vergara@gmail.com</a>",
+        contact_text3: "— Patricio",
+        location: "Viña del Mar, Chili",
+        contact_email: "patricio.elias.hernandez.vergara@gmail.com",
+        project_code: "Code",
+        project_demo: "Voir la démo",
+        footer_dev: "Développé par",
+        theme_toggle: "Changer de thème",
+        lang_toggle: "Changer de langue",
+        project1_title: "Planificateur universitaire PUCV",
+        project1_desc: "Application web pour gérer les emplois du temps académiques et les évaluations à la PUCV, avec synchronisation dans le cloud via Firebase Firestore. Interface responsive utilisable sur n'importe quel appareil.",
+        project2_title: "MARC-IA",
+        project2_desc: "Assistant virtuel basé sur la technologie RAG pour fournir une orientation institutionnelle aux étudiants de la Pontificia Universidad Católica de Valparaíso.",
+        project3_title: "Gestion Immobilière",
+        project3_desc: "Système de gestion des ventes d'appartements. Gère la relation entre la demande et la variation des prix, en simulant les conditions du marché immobilier. Projet universitaire en équipe.",
+        project4_title: "FarmaSalud",
+        project4_desc: "Système de gestion de pharmacie basé sur terminal (CLI, sans interface graphique) développé en C. Permet l'administration des clients, fournisseurs, succursales et produits, incluant des modules d'achat et la génération de rapports de ventes.",
+        project5_title: "Pixel Pointers",
+        project5_desc: "Jeu vidéo éducatif 2D en vue de dessus développé sur Godot Engine. Comprend des quêtes, des énigmes et des évaluations via des combats de boss pour enseigner des concepts techniques, programmé en GDScript. Projet universitaire en équipe.",
+        project6_title: "Intervee",
+        project6_desc: "Plateforme de simulation d'entretiens avec un environnement 3D interactif. Développée avec Next.js et Three.js, elle permet aux utilisateurs d'explorer une ville virtuelle et de passer des entretiens évalués par l'intelligence artificielle. Projet en équipe.",
+        project7_title: "Racing Web",
+        project7_desc: "Plateforme e-commerce inspirée de la culture automobile. Développée avec Ionic et Angular pour le frontend, et Node.js avec PostgreSQL pour le backend, mettant en œuvre une architecture sécurisée et conteneurisée. Projet en équipe.",
+        project8_title: "Pirate Adventures",
+        project8_desc: "Jeu vidéo d'aventure 2D développé en Java utilisant le framework LibGDX. Le joueur contrôle un personnage qui doit collecter des objets tout en évitant les obstacles et les pénalités.",
+        project9_title: "Convertisseur HTML en PDF",
+        project9_desc: "Application de bureau avec interface graphique développée en Python pour convertir des fichiers HTML locaux en PDF. Utilise Playwright pour conserver les styles CSS et les images, offrant des options de taille et d'orientation.",
+        project10_title: "ACC Server Admin Panel",
+        project10_desc: "Panneau d'administration web et rotateur automatique de circuits pour le serveur dédié d'Assetto Corsa Competizione. Configure les sessions, la météo et la liste des engagés via des formulaires, affiche la télémétrie en temps réel et est distribué sous forme d'exécutable prêt à l'emploi.",
+        project11_title: "Decants del Puerto",
+        project11_desc: "Boutique en ligne de décants de parfums de créateurs et arabes. Catalogue avec recherche, panier persistant et commandes envoyées via WhatsApp, développée avec React, TypeScript et Tailwind CSS.",
+        project12_title: "Hoy Qué Cocino",
+        project12_desc: "Application web mobile-first de meal prep basée sur la méthode de l'assiette. Propose des combinaisons d'aliments selon le régime et les restrictions de l'utilisateur, avec une API REST FastAPI, une base de données PostgreSQL et des tests automatisés.",
+        project13_title: "FitPlanner",
+        project13_desc: "Planificateur personnel d'entraînement et de nutrition. Comprend une routine hebdomadaire, l'enregistrement des séries avec minuteur de repos, un menu avec calories et des graphiques de progression du poids et de la force, le tout enregistré sur l'appareil.",
+        project14_title: "Studify",
+        project14_desc: "Projet de fin d'études. Plateforme de micro-apprentissage qui génère, grâce à l'IA, du contenu pédagogique personnalisé selon le profil d'apprentissage VARK de chaque étudiant. Repose sur un RAG structuré avec une récupération SQL déterministe, traçable jusqu'à la page source, et valide les réponses du LLM avec Pydantic pour détecter les citations hallucinées. Développé avec Vicente Cisternas.",
+        project_private: "Dépôt privé",
+        menu_label: "Menu",
+        show_more: "Voir plus",
+        show_less: "Voir moins",
+        projects_all: "Voir les {n} projets",
+        projects_less: "Afficher moins de projets",
+        project_screenshot: "Capture de",
+        nav_experience: "Expérience",
+        exp_title: "Expérience",
+        exp_location_vina: "Viña del Mar",
+        exp1_role: "Développeur Full Stack Junior",
+        exp1_date: "févr. 2026 – mars 2026",
+        exp1_p1: "Développement et maintenance de plateformes d'entreprise dans un rôle full-stack avec PHP, JavaScript et SQL, en soutien aux projets stratégiques du service informatique.",
+        exp1_p2: "Conception d'outils d'automatisation de données en Python.",
+        exp1_p3: "Mise en œuvre technique de nouvelles fonctionnalités et support au déploiement des systèmes, en assurant la continuité opérationnelle.",
+        exp2_role: "Stage professionnel · Ingénierie informatique",
+        exp2_date: "déc. 2025 – févr. 2026",
+        exp2_p1: "Automatisation de l'extraction de données par web scraping avec Python, en intégrant des flux d'information critiques pour l'entreprise.",
+        exp2_p2: "Développement en PHP de modules de suivi et de génération de liens partagés (sharelinks) pour la plateforme de l'entreprise, incluant la conception de la base de données et la création d'endpoints.",
+        exp2_p3: "Rédaction de la documentation technique des procédures et développements pour garantir la maintenabilité des systèmes.",
+        exp3_role: "Ingénierie informatique",
+        exp3_date: "mars 2023 – déc. 2026",
+        exp3_p1: "Dernière année du cursus. Projet de fin d'études : Studify, une plateforme de micro-apprentissage adaptatif basée sur l'IA générative et le RAG.",
+        cert_title: "Certifications",
+    }
+};
+
+function setLanguage(lang) {
+    const t = translations[lang] || translations['en'];
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key]) el.textContent = t[key];
+    });
+    const greeting = document.querySelector('.greeting');
+    if (greeting) greeting.textContent = t.greeting;
+    const title = document.querySelector('.title');
+    if (title) title.textContent = t.title;
+    const desc = document.querySelector('.hero-description');
+    if (desc) desc.textContent = t.hero_desc;
+    const aboutTitle = document.querySelector('#about .section-title');
+    if (aboutTitle) aboutTitle.textContent = t.about_title;
+    const aboutText = document.querySelector('#about .about-text p');
+    if (aboutText) aboutText.innerHTML = t.about_text;
+    const skillsTitle = document.querySelector('#about .skills h3');
+    if (skillsTitle) skillsTitle.textContent = t.skills_title;
+    const stats = document.querySelectorAll('#about .about-stats .stat');
+    if (stats.length === 3) {
+        stats[0].querySelector('.stat-label').textContent = t.stat_exp;
+        stats[1].querySelector('.stat-label').textContent = t.stat_proj;
+        stats[2].querySelector('.stat-label').textContent = t.stat_sat;
+    }
+    const projectsTitle = document.querySelector('#projects .section-title');
+    if (projectsTitle) projectsTitle.textContent = t.projects_title;
+    const contactTitle = document.querySelector('#contact .section-title');
+    if (contactTitle) contactTitle.textContent = t.contact_title;
+    const contactTexts = document.querySelectorAll('#contact .contact-text p');
+    if (contactTexts.length >= 3) {
+        contactTexts[0].textContent = t.contact_text1;
+        contactTexts[1].innerHTML = t.contact_text2;
+        contactTexts[2].textContent = t.contact_text3;
+    }
+    const location = document.querySelector('#contact .contact-method span');
+    if (location) location.textContent = t.location;
+    const contactEmail = document.querySelector('#contact .contact-method .email');
+    if (contactEmail) contactEmail.textContent = t.contact_email;
+    const projectCodes = document.querySelectorAll('[data-i18n="project_code"]');
+    projectCodes.forEach(el => el.textContent = t.project_code);
+    const projectDemos = document.querySelectorAll('[data-i18n="project_demo"]');
+    projectDemos.forEach(el => el.textContent = t.project_demo);
+    document.documentElement.lang = lang;
+    const themeBtn = document.getElementById('theme-toggle-btn');
+    if (themeBtn) {
+        themeBtn.title = t.theme_toggle;
+        themeBtn.setAttribute('aria-label', t.theme_toggle);
+    }
+    const langBtn = document.getElementById('lang-flag-btn');
+    if (langBtn) {
+        langBtn.title = t.lang_toggle;
+        langBtn.setAttribute('aria-label', t.lang_toggle);
+    }
+    const navToggle = document.getElementById('nav-toggle');
+    if (navToggle) navToggle.setAttribute('aria-label', t.menu_label);
+    document.querySelectorAll('.project-card').forEach(card => {
+        const img = card.querySelector('.project-image img');
+        const title = card.querySelector('.project-title');
+        if (img && title) img.alt = `${t.project_screenshot} ${title.textContent}`;
+    });
+    // Cada idioma abre y descarga su propia versión del CV
+    document.querySelectorAll('.cv-link').forEach(link => {
+        link.href = t.cv_file;
+        if (link.hasAttribute('download')) link.setAttribute('download', t.cv_download_name);
+    });
+    refreshToggles();
+}
+
+
+
+function initLanguage() {
+    const langFlagBtn = document.getElementById('lang-flag-btn');
+    const langFlagImg = document.getElementById('lang-flag-img');
+
+    const languages = [
+        { code: 'en', flag: 'https://flagcdn.com/w40/us.png', name: 'English' },
+        { code: 'es', flag: 'https://flagcdn.com/w40/cl.png', name: 'Español' },
+        { code: 'fr', flag: 'https://flagcdn.com/w40/fr.png', name: 'Français' }
+    ];
+
+    let currentLangIndex = 0; // cambiando el index cambias el idioma default
+
+    if (langFlagBtn && langFlagImg) {
+        setLanguage(languages[currentLangIndex].code);
+        langFlagImg.src = languages[currentLangIndex].flag;
+        langFlagImg.alt = languages[currentLangIndex].name;
+
+        langFlagBtn.addEventListener('click', function () {
+            currentLangIndex = (currentLangIndex + 1) % languages.length;
+            const newLang = languages[currentLangIndex];
+
+            langFlagImg.src = newLang.flag;
+            langFlagImg.alt = newLang.name;
+            setLanguage(newLang.code);
+
+            langFlagImg.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                langFlagImg.style.transform = 'scale(1)';
+            }, 150);
+        });
+    }
+}
+
+function initTheme() {
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    const themeIcon = document.getElementById('theme-icon');
+    let currentTheme = localStorage.getItem('theme');
+    if (!currentTheme) {
+        currentTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function setTheme(theme) {
+        let mainCss = document.querySelector('link[href*="main.css"]');
+        let lightCss = document.querySelector('link[href*="light.css"]');
+        if (!mainCss && !lightCss) {
+            mainCss = Array.from(document.getElementsByTagName('link')).find(l => l.href.includes('main.css'));
+        }
+        if (theme === 'light') {
+            if (!lightCss) {
+                lightCss = document.createElement('link');
+                lightCss.rel = 'stylesheet';
+                lightCss.type = 'text/css';
+                lightCss.href = 'styles/light.css';
+                lightCss.id = 'light-css';
+                document.head.appendChild(lightCss);
+            }
+            if (mainCss) mainCss.disabled = true;
+            if (lightCss) lightCss.disabled = false;
+            themeIcon.innerHTML = `
+                <!-- Sol -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="5" fill="#555e6b"/>
+                    <g stroke="#222831" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="4"/>
+                        <line x1="12" y1="20" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
+                        <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="4" y2="12"/>
+                        <line x1="20" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
+                        <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+                    </g>
+                </svg>
+            `;
+        } else {
+            if (mainCss) mainCss.disabled = false;
+            if (lightCss) lightCss.disabled = true;
+            themeIcon.innerHTML = `
+                <!-- Luna -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" fill="#b0b0b0"/>
+                </svg>
+            `;
+        }
+        currentTheme = theme;
+        localStorage.setItem('theme', theme);
+    }
+
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', function () {
+            setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+        });
+        setTheme(currentTheme);
+    }
+}
+
+function initMobileMenu() {
+    const toggle = document.getElementById('nav-toggle');
+    const menu = document.getElementById('nav-menu');
+    if (!toggle || !menu) return;
+
+    function setOpen(open) {
+        menu.classList.toggle('open', open);
+        toggle.setAttribute('aria-expanded', String(open));
+    }
+
+    toggle.addEventListener('click', () => setOpen(!menu.classList.contains('open')));
+
+    // Cerrar al elegir una sección, con Escape, al tocar fuera o al volver a escritorio
+    menu.addEventListener('click', e => {
+        if (e.target.closest('.nav-link')) setOpen(false);
+    });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && menu.classList.contains('open')) {
+            setOpen(false);
+            toggle.focus();
+        }
+    });
+    document.addEventListener('click', e => {
+        if (menu.classList.contains('open') && !e.target.closest('.nav')) setOpen(false);
+    });
+    window.matchMedia('(min-width: 769px)').addEventListener('change', e => {
+        if (e.matches) setOpen(false);
+    });
+}
+
+// Celular: textos largos plegables ("Ver más") y lista de proyectos acortada.
+// Las clases solo tienen efecto dentro de @media (max-width: 768px); en escritorio todo se ve completo.
+const PROJECTS_VISIBLE_ON_MOBILE = 4;
+const mobileQuery = window.matchMedia('(max-width: 768px)');
+
+function currentTranslations() {
+    return translations[document.documentElement.lang] || translations.en;
+}
+
+function addToggle(target, collapsedClass, button) {
+    if (!target.id) target.id = 'collapsible-' + document.querySelectorAll('[id^="collapsible-"]').length;
+    target.classList.add(collapsedClass);
+    button.type = 'button';
+    button.setAttribute('aria-controls', target.id);
+    button.setAttribute('aria-expanded', 'false');
+    button.dataset.collapsedClass = collapsedClass;
+    target.after(button);
+    button.addEventListener('click', () => {
+        const expand = target.classList.contains(collapsedClass);
+        target.classList.toggle(collapsedClass, !expand);
+        button.setAttribute('aria-expanded', String(expand));
+        refreshToggles();
+        // Al acortar la lista, volver al inicio de Proyectos (salto inmediato: el scroll suave se corta al cambiar el alto)
+        if (!expand && button.classList.contains('toggle-projects')) {
+            const top = document.getElementById('projects').getBoundingClientRect().top + window.scrollY;
+            window.scrollTo({ top, behavior: 'instant' });
+        }
+    });
+}
+
+function textToggle() {
+    const button = document.createElement('button');
+    button.className = 'toggle-more';
+    button.innerHTML = '<span></span> <i class="fas fa-chevron-down" aria-hidden="true"></i>';
+    return button;
+}
+
+function initMobileCollapse() {
+    document.querySelectorAll('.about-text p, .project-description').forEach(el => {
+        el.style.setProperty('--clamp-lines', el.matches('.about-text p') ? 7 : 3);
+        addToggle(el, 'is-clamped', textToggle());
+    });
+    document.querySelectorAll('.timeline-points').forEach(list => {
+        if (list.children.length > 1) addToggle(list, 'is-collapsed', textToggle());
+    });
+    const grid = document.querySelector('.projects-grid');
+    if (grid && grid.children.length > PROJECTS_VISIBLE_ON_MOBILE) {
+        const button = document.createElement('button');
+        button.className = 'btn btn-secondary toggle-projects';
+        button.innerHTML = '<span></span> <i class="fas fa-chevron-down" aria-hidden="true"></i>';
+        addToggle(grid, 'is-collapsed', button);
+    }
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(refreshToggles, 150);
+    });
+    mobileQuery.addEventListener('change', refreshToggles);
+}
+
+// Actualiza los textos de los botones y oculta "Ver más" cuando el texto ya cabe completo
+function refreshToggles() {
+    const t = currentTranslations();
+    const total = document.querySelectorAll('#projects .project-card').length;
+    document.querySelectorAll('[aria-controls][data-collapsed-class]').forEach(button => {
+        const target = document.getElementById(button.getAttribute('aria-controls'));
+        const expanded = button.getAttribute('aria-expanded') === 'true';
+        const label = button.querySelector('span');
+        if (button.classList.contains('toggle-projects')) {
+            label.textContent = expanded ? t.projects_less : t.projects_all.replace('{n}', total);
+            return;
+        }
+        label.textContent = expanded ? t.show_less : t.show_more;
+        if (target.classList.contains('is-clamped')) {
+            button.hidden = !expanded && target.scrollHeight <= target.clientHeight + 1;
+        }
+    });
+}
+
+// El contador "Proyectos en este portafolio" se calcula desde las tarjetas
+function initProjectCount() {
+    const counter = document.querySelector('[data-count="projects"]');
+    if (counter) counter.textContent = document.querySelectorAll('#projects .project-card').length;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    initMobileCollapse();
+    initLanguage();
+    initTheme();
+    initMobileMenu();
+    initProjectCount();
+});
