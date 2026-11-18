@@ -24,12 +24,15 @@
 
     function r_canvas() {
         const dpr = lowPower ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+        // En celular la barra del navegador cambia el alto al hacer scroll:
+        // solo se recrean las estrellas si cambia el ancho, para que no salten
+        const widthChanged = window.innerWidth !== width;
         width = window.innerWidth;
         height = window.innerHeight;
         canvas.width = width * dpr;
         canvas.height = height * dpr;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        createStars();
+        if (widthChanged || stars.length === 0) createStars();
     }
 
     // Campo de estrellas: titilan y se desplazan levemente con el scroll (parallax)
@@ -514,44 +517,11 @@ function setLanguage(lang) {
     const t = translations[lang] || translations['en'];
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (t[key]) el.textContent = t[key];
+        if (!t[key]) return;
+        // data-i18n-html: textos propios que incluyen marcado (<br>, enlaces)
+        if (el.hasAttribute('data-i18n-html')) el.innerHTML = t[key];
+        else el.textContent = t[key];
     });
-    const greeting = document.querySelector('.greeting');
-    if (greeting) greeting.textContent = t.greeting;
-    const title = document.querySelector('.title');
-    if (title) title.textContent = t.title;
-    const desc = document.querySelector('.hero-description');
-    if (desc) desc.textContent = t.hero_desc;
-    const aboutTitle = document.querySelector('#about .section-title');
-    if (aboutTitle) aboutTitle.textContent = t.about_title;
-    const aboutText = document.querySelector('#about .about-text p');
-    if (aboutText) aboutText.innerHTML = t.about_text;
-    const skillsTitle = document.querySelector('#about .skills h3');
-    if (skillsTitle) skillsTitle.textContent = t.skills_title;
-    const stats = document.querySelectorAll('#about .about-stats .stat');
-    if (stats.length === 3) {
-        stats[0].querySelector('.stat-label').textContent = t.stat_exp;
-        stats[1].querySelector('.stat-label').textContent = t.stat_proj;
-        stats[2].querySelector('.stat-label').textContent = t.stat_sat;
-    }
-    const projectsTitle = document.querySelector('#projects .section-title');
-    if (projectsTitle) projectsTitle.textContent = t.projects_title;
-    const contactTitle = document.querySelector('#contact .section-title');
-    if (contactTitle) contactTitle.textContent = t.contact_title;
-    const contactTexts = document.querySelectorAll('#contact .contact-text p');
-    if (contactTexts.length >= 3) {
-        contactTexts[0].textContent = t.contact_text1;
-        contactTexts[1].innerHTML = t.contact_text2;
-        contactTexts[2].textContent = t.contact_text3;
-    }
-    const location = document.querySelector('#contact .contact-method span');
-    if (location) location.textContent = t.location;
-    const contactEmail = document.querySelector('#contact .contact-method .email');
-    if (contactEmail) contactEmail.textContent = t.contact_email;
-    const projectCodes = document.querySelectorAll('[data-i18n="project_code"]');
-    projectCodes.forEach(el => el.textContent = t.project_code);
-    const projectDemos = document.querySelectorAll('[data-i18n="project_demo"]');
-    projectDemos.forEach(el => el.textContent = t.project_demo);
     document.documentElement.lang = lang;
     const themeBtn = document.getElementById('theme-toggle-btn');
     if (themeBtn) {
@@ -590,7 +560,13 @@ function initLanguage() {
         { code: 'fr', flag: 'https://flagcdn.com/w40/fr.png', name: 'Français' }
     ];
 
-    let currentLangIndex = 0; // cambiando el index cambias el idioma default
+    // Idioma inicial: el elegido antes; si no hay, el del navegador (es*, fr*; el resto, inglés)
+    let saved = null;
+    try { saved = localStorage.getItem('lang'); } catch (e) {}
+    const browserLang = (navigator.language || '').toLowerCase();
+    const detected = browserLang.startsWith('es') ? 'es' : browserLang.startsWith('fr') ? 'fr' : 'en';
+    const initialCode = languages.some(l => l.code === saved) ? saved : detected;
+    let currentLangIndex = languages.findIndex(l => l.code === initialCode);
 
     if (langFlagBtn && langFlagImg) {
         setLanguage(languages[currentLangIndex].code);
@@ -604,6 +580,7 @@ function initLanguage() {
             langFlagImg.src = newLang.flag;
             langFlagImg.alt = newLang.name;
             setLanguage(newLang.code);
+            try { localStorage.setItem('lang', newLang.code); } catch (e) {}
 
             langFlagImg.style.transform = 'scale(1.2)';
             setTimeout(() => {
