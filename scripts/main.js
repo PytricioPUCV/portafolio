@@ -319,25 +319,26 @@ const translations = {
         project14_title: "Studify",
         project14_desc: "Proyecto de título. Plataforma de micro-aprendizaje que genera contenido educativo personalizado con IA según el perfil de aprendizaje VARK del estudiante. Usa un RAG estructurado con recuperación determinista en SQL, trazable hasta la página fuente, y valida las respuestas del LLM con Pydantic para detectar citas alucinadas. Desarrollado junto a Vicente Cisternas.",
         project_private: "Repositorio privado",
+        projects_more: "Más proyectos",
+        project6_role: "Mi rol: diseño, planificación, informes y definición técnica, con una parte menor de desarrollo.",
+        project_personal: "Proyecto personal",
         menu_label: "Menú",
         show_more: "Ver más",
         show_less: "Ver menos",
-        projects_all: "Ver los {n} proyectos",
-        projects_less: "Mostrar menos proyectos",
         project_screenshot: "Captura de",
         nav_experience: "Experiencia",
         exp_title: "Experiencia",
         exp_location_vina: "Viña del Mar",
         exp1_role: "Desarrollador Full Stack Junior",
         exp1_date: "feb. 2026 – mar. 2026",
-        exp1_p1: "Desarrollo y mantenimiento de plataformas corporativas en un rol full stack con PHP, JavaScript y SQL, apoyando proyectos estratégicos del área TI.",
-        exp1_p2: "Diseño de herramientas de automatización de datos en Python.",
-        exp1_p3: "Implementación técnica de nuevas funcionalidades y soporte en el despliegue de sistemas, asegurando la continuidad operativa.",
+        exp1_p1: "Construí y mantuve plataformas corporativas con PHP, JavaScript y SQL, apoyando proyectos de TI.",
+        exp1_p2: "Desarrollé herramientas de automatización en Python que consolidaban datos usados para contrastar cifras y apoyar decisiones de negocio, ahorrando mucho tiempo.",
+        exp1_p3: "Implementé nuevas funcionalidades y apoyé despliegues para mantener la operación en marcha.",
         exp2_role: "Práctica profesional · Ingeniería en Informática",
         exp2_date: "dic. 2025 – feb. 2026",
-        exp2_p1: "Automatización de la extracción de datos mediante web scraping con Python, integrando flujos de información críticos para el negocio.",
-        exp2_p2: "Desarrollo en PHP de módulos de tracking y generación de enlaces compartidos (sharelinks) para la plataforma corporativa, incluyendo el diseño de la base de datos y la creación de endpoints.",
-        exp2_p3: "Documentación técnica de los procedimientos y desarrollos para asegurar la mantenibilidad de los sistemas.",
+        exp2_p1: "Desarrollé un scraper en Python que obtenía registros completos de exportaciones (tipo de fruta, toneladas, cajas, kg y más) desde una fuente que limitaba los datos por consulta: ejecutaba tres consultas y las unía por claves validadas, de modo que la base de datos tuviera los registros completos.",
+        exp2_p2: "Desarrollé módulos en PHP, con diseño de base de datos y endpoints, para el seguimiento de envíos en tiempo real y los enlaces públicos para compartir. Las posiciones de los buques se estimaban a partir de sus conexiones a antenas móviles cercanas a la costa, y los clientes podían compartir la vista de su envío con sus propios clientes en países como China, Japón, India y Estados Unidos.",
+        exp2_p3: "Redacté documentación técnica de procedimientos y desarrollos.",
         exp3_role: "Ingeniería en Informática",
         exp3_date: "mar. 2023 – dic. 2026",
         exp3_p1: "Último año de la carrera. Proyecto de título: Studify, plataforma de micro-aprendizaje adaptativo con IA generativa y RAG.",
@@ -403,25 +404,26 @@ const translations = {
         project14_title: "Studify",
         project14_desc: "Capstone project. Micro-learning platform that uses AI to generate personalized educational content based on each student's VARK learning profile. It uses structured RAG with deterministic SQL retrieval, traceable down to the source page, and validates LLM output with Pydantic to detect hallucinated citations. Developed with Vicente Cisternas.",
         project_private: "Private repository",
+        projects_more: "More projects",
+        project6_role: "My role: design, planning, documentation and technical definition, with some development.",
+        project_personal: "Personal project",
         menu_label: "Menu",
         show_more: "Show more",
         show_less: "Show less",
-        projects_all: "See all {n} projects",
-        projects_less: "Show fewer projects",
         project_screenshot: "Screenshot of",
         nav_experience: "Experience",
         exp_title: "Experience",
         exp_location_vina: "Viña del Mar",
         exp1_role: "Junior Full Stack Developer",
         exp1_date: "Feb 2026 – Mar 2026",
-        exp1_p1: "Developed and maintained corporate platforms in a full-stack role with PHP, JavaScript and SQL, supporting strategic IT projects.",
-        exp1_p2: "Designed data automation tools in Python.",
-        exp1_p3: "Handled the technical implementation of new features and supported system deployments, ensuring operational continuity.",
+        exp1_p1: "Built and maintained corporate platforms with PHP, JavaScript and SQL, supporting IT projects.",
+        exp1_p2: "Developed Python automation tools that consolidated data used to cross-check figures and support business decisions, saving significant time.",
+        exp1_p3: "Implemented new features and supported deployments to keep operations running.",
         exp2_role: "Computer Science Intern",
         exp2_date: "Dec 2025 – Feb 2026",
-        exp2_p1: "Automated data extraction through web scraping with Python, integrating business-critical information flows.",
-        exp2_p2: "Built PHP modules for tracking and shared-link (sharelink) generation on the corporate platform, including database design and endpoint development.",
-        exp2_p3: "Wrote technical documentation for procedures and developments to keep the systems maintainable.",
+        exp2_p1: "Built a Python scraper that retrieved complete export records (fruit type, tons, boxes, kg and more) from a source that capped how much data each query returned: it ran three queries and merged them by validated key fields, so the database held full records.",
+        exp2_p2: "Developed PHP modules, including database design and endpoints, for real-time shipment tracking and public share links. Vessel positions were estimated from ship connections to mobile antennas near the coast, and clients could share a live shipment view with their own customers in countries such as China, Japan, India and the United States.",
+        exp2_p3: "Wrote technical documentation for procedures and developments.",
         exp3_role: "Computer Science (Ingeniería en Informática)",
         exp3_date: "Mar 2023 – Dec 2026",
         exp3_p1: "Final year of the degree. Capstone project: Studify, an adaptive micro-learning platform powered by generative AI and RAG.",
@@ -487,25 +489,26 @@ const translations = {
         project14_title: "Studify",
         project14_desc: "Projet de fin d'études. Plateforme de micro-apprentissage qui génère, grâce à l'IA, du contenu pédagogique personnalisé selon le profil d'apprentissage VARK de chaque étudiant. Repose sur un RAG structuré avec une récupération SQL déterministe, traçable jusqu'à la page source, et valide les réponses du LLM avec Pydantic pour détecter les citations hallucinées. Développé avec Vicente Cisternas.",
         project_private: "Dépôt privé",
+        projects_more: "Plus de projets",
+        project6_role: "Mon rôle : conception, planification, rapports et définition technique, avec une part réduite de développement.",
+        project_personal: "Projet personnel",
         menu_label: "Menu",
         show_more: "Voir plus",
         show_less: "Voir moins",
-        projects_all: "Voir les {n} projets",
-        projects_less: "Afficher moins de projets",
         project_screenshot: "Capture de",
         nav_experience: "Expérience",
         exp_title: "Expérience",
         exp_location_vina: "Viña del Mar",
         exp1_role: "Développeur Full Stack Junior",
         exp1_date: "févr. 2026 – mars 2026",
-        exp1_p1: "Développement et maintenance de plateformes d'entreprise dans un rôle full-stack avec PHP, JavaScript et SQL, en soutien aux projets stratégiques du service informatique.",
-        exp1_p2: "Conception d'outils d'automatisation de données en Python.",
-        exp1_p3: "Mise en œuvre technique de nouvelles fonctionnalités et support au déploiement des systèmes, en assurant la continuité opérationnelle.",
+        exp1_p1: "J'ai construit et maintenu des plateformes d'entreprise avec PHP, JavaScript et SQL, en soutien aux projets informatiques.",
+        exp1_p2: "J'ai développé des outils d'automatisation en Python qui consolidaient des données servant à recouper des chiffres et à appuyer des décisions métier, avec un gain de temps important.",
+        exp1_p3: "J'ai implémenté de nouvelles fonctionnalités et soutenu les déploiements pour assurer la continuité des opérations.",
         exp2_role: "Stage professionnel · Ingénierie informatique",
         exp2_date: "déc. 2025 – févr. 2026",
-        exp2_p1: "Automatisation de l'extraction de données par web scraping avec Python, en intégrant des flux d'information critiques pour l'entreprise.",
-        exp2_p2: "Développement en PHP de modules de suivi et de génération de liens partagés (sharelinks) pour la plateforme de l'entreprise, incluant la conception de la base de données et la création d'endpoints.",
-        exp2_p3: "Rédaction de la documentation technique des procédures et développements pour garantir la maintenabilité des systèmes.",
+        exp2_p1: "J'ai développé un scraper en Python qui récupérait des enregistrements complets d'exportations (type de fruit, tonnes, caisses, kg, etc.) depuis une source limitant les données par requête : il exécutait trois requêtes et les fusionnait via des clés validées, afin que la base de données contienne les enregistrements complets.",
+        exp2_p2: "J'ai développé des modules PHP, avec conception de base de données et endpoints, pour le suivi des expéditions en temps réel et les liens de partage publics. Les positions des navires étaient estimées à partir de leurs connexions aux antennes mobiles proches de la côte, et les clients pouvaient partager la vue de leur expédition avec leurs propres clients dans des pays comme la Chine, le Japon, l'Inde et les États-Unis.",
+        exp2_p3: "J'ai rédigé la documentation technique des procédures et des développements.",
         exp3_role: "Ingénierie informatique",
         exp3_date: "mars 2023 – déc. 2026",
         exp3_p1: "Dernière année du cursus. Projet de fin d'études : Studify, une plateforme de micro-apprentissage adaptatif basée sur l'IA générative et le RAG.",
@@ -670,9 +673,8 @@ function initMobileMenu() {
     });
 }
 
-// Celular: textos largos plegables ("Ver más") y lista de proyectos acortada.
+// Celular: textos largos plegables ("Ver más"). Todas las tarjetas de proyecto quedan visibles.
 // Las clases solo tienen efecto dentro de @media (max-width: 768px); en escritorio todo se ve completo.
-const PROJECTS_VISIBLE_ON_MOBILE = 4;
 const mobileQuery = window.matchMedia('(max-width: 768px)');
 
 function currentTranslations() {
@@ -692,11 +694,6 @@ function addToggle(target, collapsedClass, button) {
         target.classList.toggle(collapsedClass, !expand);
         button.setAttribute('aria-expanded', String(expand));
         refreshToggles();
-        // Al acortar la lista, volver al inicio de Proyectos (salto inmediato: el scroll suave se corta al cambiar el alto)
-        if (!expand && button.classList.contains('toggle-projects')) {
-            const top = document.getElementById('projects').getBoundingClientRect().top + window.scrollY;
-            window.scrollTo({ top, behavior: 'instant' });
-        }
     });
 }
 
@@ -715,13 +712,6 @@ function initMobileCollapse() {
     document.querySelectorAll('.timeline-points').forEach(list => {
         if (list.children.length > 1) addToggle(list, 'is-collapsed', textToggle());
     });
-    const grid = document.querySelector('.projects-grid');
-    if (grid && grid.children.length > PROJECTS_VISIBLE_ON_MOBILE) {
-        const button = document.createElement('button');
-        button.className = 'btn btn-secondary toggle-projects';
-        button.innerHTML = '<span></span> <i class="fas fa-chevron-down" aria-hidden="true"></i>';
-        addToggle(grid, 'is-collapsed', button);
-    }
 
     let resizeTimer;
     window.addEventListener('resize', () => {
@@ -734,15 +724,10 @@ function initMobileCollapse() {
 // Actualiza los textos de los botones y oculta "Ver más" cuando el texto ya cabe completo
 function refreshToggles() {
     const t = currentTranslations();
-    const total = document.querySelectorAll('#projects .project-card').length;
     document.querySelectorAll('[aria-controls][data-collapsed-class]').forEach(button => {
         const target = document.getElementById(button.getAttribute('aria-controls'));
         const expanded = button.getAttribute('aria-expanded') === 'true';
         const label = button.querySelector('span');
-        if (button.classList.contains('toggle-projects')) {
-            label.textContent = expanded ? t.projects_less : t.projects_all.replace('{n}', total);
-            return;
-        }
         label.textContent = expanded ? t.show_less : t.show_more;
         if (target.classList.contains('is-clamped')) {
             button.hidden = !expanded && target.scrollHeight <= target.clientHeight + 1;

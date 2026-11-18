@@ -1009,6 +1009,73 @@ p {
     display: block;
 }
 
+/* Rol propio en proyectos de equipo */
+.project-role {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-style: italic;
+    margin: -0.75rem 0 1.5rem;
+}
+
+/* Proyectos secundarios: misma tarjeta, más compacta (va después de los @media para mantener sus columnas) */
+.projects-subtitle {
+    color: var(--text);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 4rem 0 1.5rem;
+}
+
+.projects-grid--compact {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+}
+
+.projects-grid--compact .project-image {
+    height: 140px;
+}
+
+.projects-grid--compact .project-content {
+    padding: 1.1rem;
+}
+
+.projects-grid--compact .project-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.6rem;
+}
+
+.projects-grid--compact .project-description {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.projects-grid--compact .project-role {
+    margin: -0.5rem 0 1rem;
+}
+
+.projects-grid--compact .project-tech {
+    margin-bottom: 1rem;
+}
+
+.projects-grid--compact .project-links {
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+}
+
+.projects-grid--compact .project-link {
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .projects-subtitle {
+        font-size: 1.25rem;
+        margin-top: 3rem;
+    }
+
+    .projects-grid--compact .project-image {
+        height: 120px;
+    }
+}
+
 .social-links {
     gap: 0.25rem;
 }
@@ -1176,9 +1243,8 @@ section[id] {
     }
 }
 
-/* Celular: textos largos plegables y lista de proyectos acortada (ver initMobileCollapse en main.js) */
-.toggle-more,
-.toggle-projects {
+/* Celular: textos largos plegables (ver initMobileCollapse en main.js) */
+.toggle-more {
     display: none;
 }
 
@@ -1220,17 +1286,8 @@ section[id] {
         overflow: hidden;
     }
 
-    .timeline-points.is-collapsed > li:nth-child(n+2),
-    .projects-grid.is-collapsed > .project-card:nth-child(n+5) {
+    .timeline-points.is-collapsed > li:nth-child(n+2) {
         display: none;
-    }
-
-    .toggle-projects {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        margin: 2rem auto 0;
     }
 
     .skill-tags {
