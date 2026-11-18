@@ -1243,8 +1243,9 @@ section[id] {
     }
 }
 
-/* Celular: textos largos plegables (ver initMobileCollapse en main.js) */
-.toggle-more {
+/* Celular: textos largos plegables y grupo "More projects" acortado (ver initMobileCollapse en main.js) */
+.toggle-more,
+.toggle-projects {
     display: none;
 }
 
@@ -1288,6 +1289,28 @@ section[id] {
 
     .timeline-points.is-collapsed > li:nth-child(n+2) {
         display: none;
+    }
+
+    /* display: none también las saca del orden de tabulación y del lector de pantalla */
+    .projects-grid--compact.is-collapsed > .project-card:nth-child(n+4) {
+        display: none;
+    }
+
+    .toggle-projects {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin: 2rem auto 0;
+    }
+
+    .toggle-projects i {
+        font-size: 0.8rem;
+        transition: transform 0.3s ease;
+    }
+
+    .toggle-projects[aria-expanded="true"] i {
+        transform: rotate(180deg);
     }
 
     .skill-tags {
@@ -1346,4 +1369,12 @@ section[id] {
 
 [data-theme="light"] .contact-link-email {
     text-shadow: 0 0 1px #000000;
+}
+
+/* Sin animación del botón "More projects" si el usuario prefiere menos movimiento (va al final para ganar en la cascada) */
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+    .toggle-projects,
+    .toggle-projects i {
+        transition: none;
+    }
 }

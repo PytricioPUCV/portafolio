@@ -320,6 +320,8 @@ const translations = {
         project14_desc: "Proyecto de título. Plataforma de micro-aprendizaje que genera contenido educativo personalizado con IA según el perfil de aprendizaje VARK del estudiante. Usa un RAG estructurado con recuperación determinista en SQL, trazable hasta la página fuente, y valida las respuestas del LLM con Pydantic para detectar citas alucinadas. Desarrollado junto a Vicente Cisternas.",
         project_private: "Repositorio privado",
         projects_more: "Más proyectos",
+        projects_show_more: "Mostrar más proyectos",
+        projects_show_less: "Mostrar menos proyectos",
         project6_role: "Mi rol: diseño, planificación, informes y definición técnica, con una parte menor de desarrollo.",
         project_personal: "Proyecto personal",
         menu_label: "Menú",
@@ -405,6 +407,8 @@ const translations = {
         project14_desc: "Capstone project. Micro-learning platform that uses AI to generate personalized educational content based on each student's VARK learning profile. It uses structured RAG with deterministic SQL retrieval, traceable down to the source page, and validates LLM output with Pydantic to detect hallucinated citations. Developed with Vicente Cisternas.",
         project_private: "Private repository",
         projects_more: "More projects",
+        projects_show_more: "Show more projects",
+        projects_show_less: "Show fewer projects",
         project6_role: "My role: design, planning, documentation and technical definition, with some development.",
         project_personal: "Personal project",
         menu_label: "Menu",
@@ -490,6 +494,8 @@ const translations = {
         project14_desc: "Projet de fin d'études. Plateforme de micro-apprentissage qui génère, grâce à l'IA, du contenu pédagogique personnalisé selon le profil d'apprentissage VARK de chaque étudiant. Repose sur un RAG structuré avec une récupération SQL déterministe, traçable jusqu'à la page source, et valide les réponses du LLM avec Pydantic pour détecter les citations hallucinées. Développé avec Vicente Cisternas.",
         project_private: "Dépôt privé",
         projects_more: "Plus de projets",
+        projects_show_more: "Voir plus de projets",
+        projects_show_less: "Voir moins de projets",
         project6_role: "Mon rôle : conception, planification, rapports et définition technique, avec une part réduite de développement.",
         project_personal: "Projet personnel",
         menu_label: "Menu",
@@ -673,8 +679,10 @@ function initMobileMenu() {
     });
 }
 
-// Celular: textos largos plegables ("Ver más"). Todas las tarjetas de proyecto quedan visibles.
+// Celular: textos largos plegables ("Ver más") y grupo "More projects" acortado.
 // Las clases solo tienen efecto dentro de @media (max-width: 768px); en escritorio todo se ve completo.
+// Sin JS no se agrega ninguna clase, así que todo queda visible.
+const MORE_PROJECTS_VISIBLE_ON_MOBILE = 3;
 const mobileQuery = window.matchMedia('(max-width: 768px)');
 
 function currentTranslations() {
@@ -694,6 +702,12 @@ function addToggle(target, collapsedClass, button) {
         target.classList.toggle(collapsedClass, !expand);
         button.setAttribute('aria-expanded', String(expand));
         refreshToggles();
+        // Al acortar el grupo, volver a su subtítulo: si no, la vista queda muy abajo (salto inmediato, sin animación)
+        if (!expand && button.classList.contains('toggle-projects')) {
+            const subtitle = document.querySelector('.projects-subtitle') || target;
+            const top = subtitle.getBoundingClientRect().top + window.scrollY - 80;
+            window.scrollTo({ top, behavior: 'instant' });
+        }
     });
 }
 
@@ -712,6 +726,14 @@ function initMobileCollapse() {
     document.querySelectorAll('.timeline-points').forEach(list => {
         if (list.children.length > 1) addToggle(list, 'is-collapsed', textToggle());
     });
+    // Solo el grupo secundario se acorta; los destacados siempre quedan visibles
+    const moreGrid = document.querySelector('.projects-grid--compact');
+    if (moreGrid && moreGrid.children.length > MORE_PROJECTS_VISIBLE_ON_MOBILE) {
+        const button = document.createElement('button');
+        button.className = 'btn btn-secondary toggle-projects';
+        button.innerHTML = '<span data-i18n="projects_show_more"></span> <i class="fas fa-chevron-down" aria-hidden="true"></i>';
+        addToggle(moreGrid, 'is-collapsed', button);
+    }
 
     let resizeTimer;
     window.addEventListener('resize', () => {
@@ -728,6 +750,12 @@ function refreshToggles() {
         const target = document.getElementById(button.getAttribute('aria-controls'));
         const expanded = button.getAttribute('aria-expanded') === 'true';
         const label = button.querySelector('span');
+        if (button.classList.contains('toggle-projects')) {
+            // La clave data-i18n sigue al estado, así setLanguage traduce el texto correcto
+            label.dataset.i18n = expanded ? 'projects_show_less' : 'projects_show_more';
+            label.textContent = t[label.dataset.i18n];
+            return;
+        }
         label.textContent = expanded ? t.show_less : t.show_more;
         if (target.classList.contains('is-clamped')) {
             button.hidden = !expanded && target.scrollHeight <= target.clientHeight + 1;
