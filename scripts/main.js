@@ -19,7 +19,7 @@
     }
 
     function isDarkMode() {
-        return localStorage.getItem('theme') !== 'light';
+        return document.documentElement.getAttribute('data-theme') !== 'light';
     }
 
     function r_canvas() {
@@ -616,28 +616,12 @@ function initLanguage() {
 function initTheme() {
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     const themeIcon = document.getElementById('theme-icon');
-    let currentTheme = localStorage.getItem('theme');
-    if (!currentTheme) {
-        currentTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
+    // El script inline del <head> ya puso data-theme antes del primer pintado
+    let currentTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
 
     function setTheme(theme) {
-        let mainCss = document.querySelector('link[href*="main.css"]');
-        let lightCss = document.querySelector('link[href*="light.css"]');
-        if (!mainCss && !lightCss) {
-            mainCss = Array.from(document.getElementsByTagName('link')).find(l => l.href.includes('main.css'));
-        }
+        document.documentElement.setAttribute('data-theme', theme);
         if (theme === 'light') {
-            if (!lightCss) {
-                lightCss = document.createElement('link');
-                lightCss.rel = 'stylesheet';
-                lightCss.type = 'text/css';
-                lightCss.href = 'styles/light.css';
-                lightCss.id = 'light-css';
-                document.head.appendChild(lightCss);
-            }
-            if (mainCss) mainCss.disabled = true;
-            if (lightCss) lightCss.disabled = false;
             themeIcon.innerHTML = `
                 <!-- Sol -->
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -655,8 +639,6 @@ function initTheme() {
                 </svg>
             `;
         } else {
-            if (mainCss) mainCss.disabled = false;
-            if (lightCss) lightCss.disabled = true;
             themeIcon.innerHTML = `
                 <!-- Luna -->
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -665,12 +647,13 @@ function initTheme() {
             `;
         }
         currentTheme = theme;
-        localStorage.setItem('theme', theme);
     }
 
     if (themeToggleBtn) {
         themeToggleBtn.addEventListener('click', function () {
             setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+            // Solo se guarda una elección explícita; sin ella se sigue la preferencia del sistema
+            try { localStorage.setItem('theme', currentTheme); } catch (e) {}
         });
         setTheme(currentTheme);
     }
