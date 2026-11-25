@@ -658,7 +658,7 @@ function initTheme() {
         document.documentElement.setAttribute('data-theme', theme);
         // La barra del navegador sigue al tema elegido, no solo al del sistema (colores de --bg)
         document.querySelectorAll('meta[name="theme-color"]').forEach(meta => {
-            meta.content = theme === 'light' ? '#f1f5fc' : '#040404';
+            meta.content = theme === 'light' ? '#f7f9fe' : '#040404';
         });
         if (theme === 'light') {
             themeIcon.innerHTML = `

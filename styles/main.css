@@ -30,15 +30,15 @@
    azul del blob #0070f0, salmón #CE9178 de las strings, azul #569CD6 de las keywords); solo cambian la
    luminosidad y el contraste. Texto y sintaxis verificados WCAG AA sobre el fondo y sobre el vidrio. */
 [data-theme="light"] {
-    --bg: #f1f5fc;
+    --bg: #f7f9fe;
     --text: #0b1220;
     --text-muted: #475063;
     --text-subtle: #566074;
     --text-inverse: #ffffff;
-    --surface: rgba(255, 255, 255, 0.65);
+    --surface: rgba(255, 255, 255, 0.5);
     --border: rgba(11, 18, 32, 0.12);
     --border-hover: rgba(11, 18, 32, 0.3);
-    --header-bg: rgba(241, 245, 252, 0.8);
+    --header-bg: rgba(247, 249, 254, 0.8);
     --header-border: rgba(11, 18, 32, 0.08);
     --code-text: #0b1220;
     --syntax-keyword: #115796;
@@ -55,7 +55,7 @@
     --accent-glow: rgba(0, 106, 166, 0.16);
     --hover-bg: rgba(11, 18, 32, 0.06);
     --focus-ring: rgba(0, 106, 166, 0.28);
-    --menu-bg: #f1f5fc;
+    --menu-bg: #f7f9fe;
     --menu-border: rgba(11, 18, 32, 0.1);
     --menu-shadow: rgba(11, 18, 32, 0.12);
 
