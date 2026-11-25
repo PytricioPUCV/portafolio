@@ -1469,6 +1469,26 @@ section[id] {
 }
 
 
+@media (prefers-reduced-motion: reduce) {
+    [data-theme="light"] .code-animation {
+        animation: none;
+    }
+
+    [data-theme="light"] .code-line {
+        animation: none;
+        opacity: 1;
+    }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+    [data-theme="light"] .project-card:hover,
+    [data-theme="light"] .skill-tag:hover {
+        transform: none;
+    }
+}
+
+
 /* Tema claro: ajustes que no son un simple cambio de valor (el resto vive en los tokens de arriba) */
 [data-theme="light"] .footer-text p,
 [data-theme="light"] .social-link {
@@ -1504,5 +1524,17 @@ section[id] {
     .toggle-projects,
     .toggle-projects i {
         transition: none;
+    }
+}
+
+/* Con prefers-reduced-motion la tarjeta de código no flota ni anima sus líneas (ambos temas; va al final para ganar sobre los @media de tamaño) */
+@media (prefers-reduced-motion: reduce) {
+    .code-animation {
+        animation: none;
+    }
+
+    .code-line {
+        animation: none;
+        opacity: 1;
     }
 }
