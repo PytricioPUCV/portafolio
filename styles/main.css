@@ -1372,32 +1372,6 @@ section[id] {
 }
 
 
-/* Fondo en claro: resplandor azul arriba a la izquierda y cuadrícula de puntos que se desvanece hacia los
-   bordes. Reemplaza al cielo animado (el canvas se apaga en main.js) y a las imágenes de gradiente. */
-[data-theme="light"] body {
-    background-image: radial-gradient(ellipse 1100px 800px at 0% 0%, var(--bg-glow), transparent 70%);
-    background-size: auto;
-    background-repeat: no-repeat;
-    background-position: 0 0;
-}
-
-[data-theme="light"] body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background-image: radial-gradient(circle, var(--grid-dot) 1px, transparent 1.5px);
-    background-size: 24px 24px;
-    -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 35%, #000 20%, transparent 100%);
-    mask-image: radial-gradient(ellipse 85% 75% at 50% 35%, #000 20%, transparent 100%);
-}
-
-[data-theme="light"] #star-bg {
-    display: none;
-}
-
-
 /* Header en claro: translúcido con tinte del fondo, borde inferior sutil y desenfoque */
 [data-theme="light"] .header {
     border-bottom: 1px solid var(--header-border);
