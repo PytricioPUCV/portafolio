@@ -26,52 +26,38 @@
     --menu-shadow: rgba(0, 0, 0, 0.4);
 }
 
-/* Tema claro ("papel técnico con luz de amanecer"): fondo azulado frío, superficies blancas,
-   profundidad por sombras suaves en capas. Contrastes WCAG AA verificados:
-   text 16.5 / text-muted 7.0 / text-subtle 5.0 sobre --bg; accent 5.3 sobre --bg; sintaxis >= 5.3 sobre --code-bg */
+/* Tema claro: el mismo diseño del oscuro de día. Los tonos se derivan del oscuro (acento cian #00bfff,
+   azul del blob #0070f0, salmón #CE9178 de las strings, azul #569CD6 de las keywords); solo cambian la
+   luminosidad y el contraste. Texto y sintaxis verificados WCAG AA sobre el fondo y sobre el vidrio. */
 [data-theme="light"] {
-    --bg: #f4f6fb;
-    --surface: #ffffff;
-    --surface-2: #eef2f9;
-    --text: #0f172a;
-    --text-muted: #475569;
-    --text-subtle: #5b6b82;
+    --bg: #f1f5fc;
+    --text: #0b1220;
+    --text-muted: #475063;
+    --text-subtle: #566074;
     --text-inverse: #ffffff;
-    --border: #d5dde9;
-    --border-hover: #9fb0c8;
-    --accent: #0b5fd9;
-    --accent-glow: rgba(11, 95, 217, 0.12);
-    --header-bg: rgba(244, 246, 251, 0.8);
-    --header-border: rgba(15, 23, 42, 0.08);
-    --chip-bg: var(--surface-2);
-    --chip-bg-hover: #e2e8f3;
-    --chip-border: #d5dde9;
+    --surface: rgba(255, 255, 255, 0.65);
+    --border: rgba(11, 18, 32, 0.12);
+    --border-hover: rgba(11, 18, 32, 0.3);
+    --header-bg: rgba(241, 245, 252, 0.8);
+    --header-border: rgba(11, 18, 32, 0.08);
+    --code-text: #0b1220;
+    --syntax-keyword: #1763ad;
+    --syntax-variable: #08648f;
+    --syntax-string: #9c4524;
+    --chip-bg: rgba(11, 18, 32, 0.05);
+    --chip-bg-hover: rgba(11, 18, 32, 0.09);
+    --chip-border: rgba(11, 18, 32, 0.16);
     --social-hover: var(--text);
     --link-muted: var(--text-muted);
     --link-email: var(--text);
-    --timeline-line: #c3cfe0;
-    --hover-bg: rgba(15, 23, 42, 0.06);
-    --focus-ring: rgba(11, 95, 217, 0.25);
-    --menu-bg: #ffffff;
-    --menu-border: #d5dde9;
-    --menu-shadow: rgba(15, 23, 42, 0.1);
-
-    /* Sombras en capas (suaves, tintadas de azul pizarra) */
-    --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.05);
-    --shadow-card-hover: 0 2px 4px rgba(15, 23, 42, 0.05), 0 12px 28px rgba(15, 23, 42, 0.1);
-    --shadow-code: 0 1px 2px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.08), 0 24px 48px rgba(15, 23, 42, 0.07);
-
-    /* Fondo: cuadrícula de puntos y resplandor azul arriba a la izquierda */
-    --grid-dot: rgba(15, 23, 42, 0.16);
-    --bg-glow: rgba(11, 95, 217, 0.13);
-
-    /* Tarjeta de código: editor claro tipo GitHub Light */
-    --code-bg: #ffffff;
-    --code-border: #d0d7de;
-    --code-text: #24292f;
-    --syntax-keyword: #cf222e;
-    --syntax-variable: #0550ae;
-    --syntax-string: #116329;
+    --timeline-line: rgba(11, 18, 32, 0.18);
+    --accent: #006aa6;
+    --accent-glow: rgba(0, 106, 166, 0.16);
+    --hover-bg: rgba(11, 18, 32, 0.06);
+    --focus-ring: rgba(0, 106, 166, 0.28);
+    --menu-bg: #f1f5fc;
+    --menu-border: rgba(11, 18, 32, 0.1);
+    --menu-shadow: rgba(11, 18, 32, 0.12);
 }
 
 
