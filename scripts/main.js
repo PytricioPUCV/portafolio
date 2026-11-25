@@ -56,18 +56,35 @@
 
     function drawStars() {
         const dark = isDarkMode();
-        const color = dark ? '255, 255, 255' : '70, 90, 130';
         const scroll = reducedMotion ? 0 : window.scrollY;
         for (const s of stars) {
             const twinkle = reducedMotion ? 1 : 0.6 + 0.4 * Math.sin(frame * s.speed + s.phase);
-            const alpha = s.base * twinkle * (dark ? 1 : 0.5);
             const y = (((s.y - scroll * s.depth) % height) + height) % height;
+            let color, alpha, radius = s.r, glow = null, glowBlur = 0;
+            if (dark) {
+                color = '255, 255, 255';
+                alpha = s.base * twinkle;
+                if (s.bright && !lowPower) {
+                    glow = 'rgba(0, 191, 255, 0.8)';
+                    glowBlur = 6;
+                }
+            } else {
+                // Cielo de día: índigo y azul, más grandes y opacas para leerse como estrellas (no como
+                // polvo), con borde suave; las brillantes llevan halo azul como en el oscuro
+                color = s.bright ? '0, 112, 240' : '67, 56, 202';
+                radius = s.r * 1.5;
+                alpha = Math.min(1, (0.35 + s.base * 0.8) * twinkle);
+                if (!lowPower) {
+                    glow = s.bright ? 'rgba(0, 112, 240, 0.6)' : 'rgba(67, 56, 202, 0.35)';
+                    glowBlur = s.bright ? 8 : 3;
+                }
+            }
             ctx.beginPath();
-            ctx.arc(s.x, y, s.r, 0, 2 * Math.PI);
+            ctx.arc(s.x, y, radius, 0, 2 * Math.PI);
             ctx.fillStyle = `rgba(${color}, ${alpha})`;
-            if (s.bright && dark && !lowPower) {
-                ctx.shadowColor = 'rgba(0, 191, 255, 0.8)';
-                ctx.shadowBlur = 6;
+            if (glow) {
+                ctx.shadowColor = glow;
+                ctx.shadowBlur = glowBlur;
             }
             ctx.fill();
             ctx.shadowBlur = 0;
@@ -99,8 +116,12 @@
     }
 
     function drawComets() {
-        const trailStart = isDarkMode() ? { r: 0, g: 120, b: 255 } : { r: 0, g: 51, b: 102 };
-        const trailEnd = { r: 0, g: 191, b: 255 };
+        const dark = isDarkMode();
+        const trailStart = dark ? { r: 0, g: 120, b: 255 } : { r: 30, g: 60, b: 190 };
+        const trailEnd = dark ? { r: 0, g: 191, b: 255 } : { r: 0, g: 140, b: 255 };
+        // En claro la cabeza es azul saturado (no blanca) y la estela es más opaca y ancha
+        const trailAlpha = dark ? 0.25 : 0.5;
+        const trailRadius = dark ? 3 : 3.5;
 
         for (const comet of comets) {
             for (let i = 0; i < comet.trail.length; i++) {
@@ -111,9 +132,9 @@
                 const b = Math.round(trailStart.b + (trailEnd.b - trailStart.b) * ratio);
                 const color = `rgb(${r},${g},${b})`;
                 ctx.save();
-                ctx.globalAlpha = t.alpha * 0.25 * ratio;
+                ctx.globalAlpha = t.alpha * trailAlpha * ratio;
                 ctx.beginPath();
-                ctx.arc(t.x, t.y, 3, 0, 2 * Math.PI);
+                ctx.arc(t.x, t.y, trailRadius, 0, 2 * Math.PI);
                 ctx.fillStyle = color;
                 if (!lowPower) {
                     ctx.shadowColor = color;
@@ -123,12 +144,14 @@
                 ctx.restore();
             }
             ctx.save();
-            ctx.globalAlpha = comet.alpha;
+            // En claro la cabeza se desvanece más despacio (raíz del alfa) para leerse como punto nítido
+            // aun a través del vidrio
+            ctx.globalAlpha = dark ? comet.alpha : Math.sqrt(comet.alpha);
             ctx.beginPath();
-            ctx.arc(comet.x, comet.y, 5, 0, 2 * Math.PI);
-            ctx.fillStyle = '#fff';
-            ctx.shadowColor = '#fff';
-            ctx.shadowBlur = 16;
+            ctx.arc(comet.x, comet.y, dark ? 5 : 6, 0, 2 * Math.PI);
+            ctx.fillStyle = dark ? '#fff' : '#0636a8';
+            ctx.shadowColor = dark ? '#fff' : 'rgba(0, 112, 240, 0.9)';
+            ctx.shadowBlur = dark ? 16 : 10;
             ctx.fill();
             ctx.restore();
         }
@@ -158,14 +181,28 @@
         shootingStars = shootingStars.filter(s => s.life < s.maxLife);
     }
 
+    // En claro la estrella fugaz se atenúa al cruzar bloques de texto, para no distraer de la lectura
+    const TEXT_BLOCKS = '.hero-text, .about-text, .skills, .timeline-card, .project-content, .contact-text, .contact-methods';
+
     function drawShootingStars() {
-        const color = isDarkMode() ? '255, 255, 255' : '0, 90, 180';
+        const dark = isDarkMode();
+        const color = dark ? '255, 255, 255' : '0, 80, 220';
+        const textRects = !dark && shootingStars.length
+            ? Array.from(document.querySelectorAll(TEXT_BLOCKS), el => el.getBoundingClientRect())
+            : [];
         for (const s of shootingStars) {
             const progress = s.life / s.maxLife;
-            const alpha = Math.sin(progress * Math.PI) * 0.9;
+            let alpha = Math.sin(progress * Math.PI) * 0.9;
             const speed = Math.hypot(s.vx, s.vy);
             const tailX = s.x - (s.vx / speed) * s.length;
             const tailY = s.y - (s.vy / speed) * s.length;
+            if (!dark) {
+                const pts = [[s.x, s.y], [tailX, tailY], [(s.x + tailX) / 2, (s.y + tailY) / 2]];
+                const overText = textRects.some(r => pts.some(([x, y]) =>
+                    x > r.left - 12 && x < r.right + 12 && y > r.top - 12 && y < r.bottom + 12));
+                s.dim = (s.dim === undefined ? 1 : s.dim) + ((overText ? 0.12 : 1) - (s.dim === undefined ? 1 : s.dim)) * 0.25;
+                alpha *= s.dim;
+            }
             const gradient = ctx.createLinearGradient(s.x, s.y, tailX, tailY);
             gradient.addColorStop(0, `rgba(${color}, ${alpha})`);
             gradient.addColorStop(1, `rgba(${color}, 0)`);
@@ -173,9 +210,21 @@
             ctx.moveTo(s.x, s.y);
             ctx.lineTo(tailX, tailY);
             ctx.strokeStyle = gradient;
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = dark ? 1.5 : 2.6;
             ctx.lineCap = 'round';
             ctx.stroke();
+            if (!dark) {
+                // Cabeza visible: sobre fondo claro una línea fina sola se pierde
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, 2.6, 0, 2 * Math.PI);
+                ctx.fillStyle = `rgba(${color}, ${alpha})`;
+                if (!lowPower) {
+                    ctx.shadowColor = 'rgba(0, 112, 240, 0.7)';
+                    ctx.shadowBlur = 8;
+                }
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
         }
     }
 

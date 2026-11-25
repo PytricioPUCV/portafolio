@@ -41,9 +41,9 @@
     --header-bg: rgba(241, 245, 252, 0.8);
     --header-border: rgba(11, 18, 32, 0.08);
     --code-text: #0b1220;
-    --syntax-keyword: #1763ad;
-    --syntax-variable: #08648f;
-    --syntax-string: #9c4524;
+    --syntax-keyword: #115796;
+    --syntax-variable: #065a82;
+    --syntax-string: #8c3d1e;
     --chip-bg: rgba(11, 18, 32, 0.05);
     --chip-bg-hover: rgba(11, 18, 32, 0.09);
     --chip-border: rgba(11, 18, 32, 0.16);
@@ -58,6 +58,13 @@
     --menu-bg: #f1f5fc;
     --menu-border: rgba(11, 18, 32, 0.1);
     --menu-shadow: rgba(11, 18, 32, 0.12);
+
+    /* Blobs del fondo: mismo azul (#0070f0) y naranja (#ff831c) que las imágenes del oscuro, aquí como
+       azul más presente y durazno muy tenue; el valor es el alfa máximo en el centro */
+    --blob-blue: 0, 112, 240;
+    --blob-blue-a: 0.2;
+    --blob-warm: 255, 140, 60;
+    --blob-warm-a: 0.09;
 }
 
 
@@ -1403,6 +1410,34 @@ section[id] {
     box-shadow: 0 0 0 4px var(--focus-ring);
 }
 
+
+/* Fondo en claro: mismos blobs que el oscuro (mismo tamaño 1266x1211 y misma posición, heredados de body),
+   dibujados como degradados con el perfil radial medido de las imágenes originales */
+[data-theme="light"] body {
+    background-image:
+        radial-gradient(ellipse closest-side,
+            rgba(var(--blob-blue), calc(var(--blob-blue-a) * 1)) 0%,
+            rgba(var(--blob-blue), calc(var(--blob-blue-a) * 0.88)) 10%,
+            rgba(var(--blob-blue), calc(var(--blob-blue-a) * 0.78)) 20%,
+            rgba(var(--blob-blue), calc(var(--blob-blue-a) * 0.66)) 30%,
+            rgba(var(--blob-blue), calc(var(--blob-blue-a) * 0.54)) 40%,
+            rgba(var(--blob-blue), calc(var(--blob-blue-a) * 0.38)) 50%,
+            rgba(var(--blob-blue), calc(var(--blob-blue-a) * 0.19)) 60%,
+            rgba(var(--blob-blue), calc(var(--blob-blue-a) * 0.13)) 70%,
+            rgba(var(--blob-blue), calc(var(--blob-blue-a) * 0.03)) 80%,
+            rgba(var(--blob-blue), 0) 90%),
+        radial-gradient(ellipse closest-side,
+            rgba(var(--blob-warm), calc(var(--blob-warm-a) * 1)) 0%,
+            rgba(var(--blob-warm), calc(var(--blob-warm-a) * 0.89)) 10%,
+            rgba(var(--blob-warm), calc(var(--blob-warm-a) * 0.78)) 20%,
+            rgba(var(--blob-warm), calc(var(--blob-warm-a) * 0.67)) 30%,
+            rgba(var(--blob-warm), calc(var(--blob-warm-a) * 0.58)) 40%,
+            rgba(var(--blob-warm), calc(var(--blob-warm-a) * 0.39)) 50%,
+            rgba(var(--blob-warm), calc(var(--blob-warm-a) * 0.25)) 60%,
+            rgba(var(--blob-warm), calc(var(--blob-warm-a) * 0.17)) 70%,
+            rgba(var(--blob-warm), calc(var(--blob-warm-a) * 0.06)) 80%,
+            rgba(var(--blob-warm), 0) 90%);
+}
 
 /* Sin animación del botón "More projects" si el usuario prefiere menos movimiento (va al final para ganar en la cascada) */
 @media (max-width: 768px) and (prefers-reduced-motion: reduce) {
