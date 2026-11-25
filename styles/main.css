@@ -1469,7 +1469,7 @@ section[id] {
 }
 
 
-/* Tema claro: excepciones que no son un simple cambio de valor */
+/* Tema claro: ajustes que no son un simple cambio de valor (el resto vive en los tokens de arriba) */
 [data-theme="light"] .footer-text p,
 [data-theme="light"] .social-link {
     color: var(--text-subtle);
@@ -1479,33 +1479,25 @@ section[id] {
     color: var(--social-hover);
 }
 
-[data-theme="light"] body {
-    position: relative;
-}
-
-[data-theme="light"] .hero-title {
-    color: #222831;
-}
-
-[data-theme="light"] .about-content {
-    background: none;
-}
-
-[data-theme="light"] .about-text p {
-    color: #555e6b;
-}
-
-[data-theme="light"] .contact-text {
-    color: #222831;
-}
-
-[data-theme="light"] .contact-method {
-    color: #222831;
-}
-
+/* El peso 500 reemplaza al text-shadow que engrosaba el correo */
 [data-theme="light"] .contact-link-email {
-    text-shadow: 0 0 1px #000000;
+    font-weight: 500;
 }
+
+[data-theme="light"] .lang-flag-btn:hover {
+    background: var(--hover-bg);
+}
+
+[data-theme="light"] .nav-toggle span {
+    background: var(--text);
+}
+
+/* Foco visible en claro: contorno con el acento más un halo suave */
+[data-theme="light"] :focus-visible {
+    outline-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
 
 /* Sin animación del botón "More projects" si el usuario prefiere menos movimiento (va al final para ganar en la cascada) */
 @media (max-width: 768px) and (prefers-reduced-motion: reduce) {
