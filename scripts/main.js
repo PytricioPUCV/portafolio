@@ -296,9 +296,10 @@
         const drawStatic = () => { ctx.clearRect(0, 0, width, height); drawStars(); };
         drawStatic();
         window.addEventListener('resize', drawStatic);
-        document.addEventListener('click', e => {
-            if (e.target.closest('#theme-toggle-btn')) setTimeout(drawStatic, 0);
-        });
+        // Se observa data-theme en vez del clic: el botón reemplaza el icono al cambiar de tema y deja
+        // a e.target desconectado del botón, así que closest() ya no lo encontraba
+        new MutationObserver(drawStatic)
+            .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
         return;
     }
 
