@@ -184,8 +184,12 @@
     const stepsPerFrame = lowPower ? 2 : 1;
     let skipFrame = false;
 
+    let rafId = 0;
+    let running = false;
+
     function anim() {
-        requestAnimationFrame(anim);
+        if (!running) return;
+        rafId = requestAnimationFrame(anim);
         if (lowPower) {
             skipFrame = !skipFrame;
             if (skipFrame) return;
@@ -206,7 +210,7 @@
             if (isPageVisible) {
                 const n = Math.floor(randomBetween(1, 3));
                 for (let i = 0; i < n; i++) {
-                    setTimeout(() => comets.push(createComet()), i * 400);
+                    setTimeout(() => { if (running) comets.push(createComet()); }, i * 400);
                 }
             }
             scheduleComets(randomBetween(3000, 7000));
@@ -229,6 +233,7 @@
 
     function handleVisibilityChange() {
         isPageVisible = !document.hidden;
+        if (!running) return;
         if (isPageVisible) {
             comets = [];
             shootingStars = [];
@@ -239,23 +244,50 @@
         }
     }
 
+    // El cielo animado solo existe en el tema oscuro: en claro el fondo es una cuadrícula en CSS
+    // y el canvas se apaga por completo (sin bucle de animación ni temporizadores).
+    function drawStatic() {
+        ctx.clearRect(0, 0, width, height);
+        if (isDarkMode()) drawStars();
+    }
+
+    function startSky() {
+        if (running) return;
+        running = true;
+        if (reducedMotion) {
+            // Sin animación: solo el cielo estático
+            drawStatic();
+            return;
+        }
+        anim();
+        startEffects();
+    }
+
+    function stopSky() {
+        running = false;
+        cancelAnimationFrame(rafId);
+        clearTimeout(cometTimer);
+        clearTimeout(shootingTimer);
+        comets = [];
+        shootingStars = [];
+        ctx.clearRect(0, 0, width, height);
+    }
+
+    function syncSkyWithTheme() {
+        if (isDarkMode()) startSky(); else stopSky();
+    }
+
     window.addEventListener('resize', r_canvas);
     r_canvas();
 
     if (reducedMotion) {
-        // Sin animación: solo el cielo estático, redibujado al cambiar de tema
-        const drawStatic = () => { ctx.clearRect(0, 0, width, height); drawStars(); };
-        drawStatic();
         window.addEventListener('resize', drawStatic);
-        document.addEventListener('click', e => {
-            if (e.target.closest('#theme-toggle-btn')) setTimeout(drawStatic, 0);
-        });
-        return;
+    } else {
+        document.addEventListener('visibilitychange', handleVisibilityChange);
     }
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    anim();
-    startEffects();
+    new MutationObserver(syncSkyWithTheme)
+        .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    syncSkyWithTheme();
 })();
 
 const translations = {
