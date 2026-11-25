@@ -8,7 +8,10 @@
     --border-hover: rgba(255, 255, 255, 0.3);
     --header-bg: rgba(4, 4, 4, 0.95);
     --text-inverse: #040404;
-    --code-variable: #9CDCFE;
+    --code-text: #ffffff;
+    --syntax-keyword: #569CD6;
+    --syntax-variable: #9CDCFE;
+    --syntax-string: #CE9178;
     --chip-bg: rgba(255, 255, 255, 0.1);
     --chip-bg-hover: rgba(255, 255, 255, 0.2);
     --chip-border: rgba(255, 255, 255, 0.2);
@@ -23,29 +26,54 @@
     --menu-shadow: rgba(0, 0, 0, 0.4);
 }
 
+/* Tema claro ("papel técnico con luz de amanecer"): fondo azulado frío, superficies blancas,
+   profundidad por sombras suaves en capas. Contrastes WCAG AA verificados:
+   text 16.5 / text-muted 7.0 / text-subtle 5.0 sobre --bg; accent 5.3 sobre --bg; sintaxis >= 5.3 sobre --code-bg */
 [data-theme="light"] {
-    --bg: #f7f7fa;
-    --text: #222831;
-    --text-muted: #555e6b;
-    --surface: #fff;
-    --border: #e0e0e0;
-    --border-hover: #bdbdbd;
-    --header-bg: rgba(255, 255, 255, 0.95);
-    --text-inverse: #fff;
-    --code-variable: #144f6e;
-    --chip-bg: #f3f3f7;
-    --chip-bg-hover: #e9e9ef;
-    --chip-border: #e0e0e0;
-    --social-hover: #222831;
-    --link-muted: #222831;
-    --link-email: #0e0e0e;
-    --timeline-line: #e0e0e0;
-    --accent: #0078ff;
-    --accent-glow: rgba(0, 120, 255, 0.15);
+    --bg: #f4f6fb;
+    --surface: #ffffff;
+    --surface-2: #eef2f9;
+    --text: #0f172a;
+    --text-muted: #475569;
+    --text-subtle: #5b6b82;
+    --text-inverse: #ffffff;
+    --border: #d5dde9;
+    --border-hover: #9fb0c8;
+    --accent: #0b5fd9;
+    --accent-glow: rgba(11, 95, 217, 0.12);
+    --header-bg: rgba(244, 246, 251, 0.8);
+    --header-border: rgba(15, 23, 42, 0.08);
+    --chip-bg: var(--surface-2);
+    --chip-bg-hover: #e2e8f3;
+    --chip-border: #d5dde9;
+    --social-hover: var(--text);
+    --link-muted: var(--text-muted);
+    --link-email: var(--text);
+    --timeline-line: #c3cfe0;
+    --hover-bg: rgba(15, 23, 42, 0.06);
+    --focus-ring: rgba(11, 95, 217, 0.25);
     --menu-bg: #ffffff;
-    --menu-border: #e0e0e0;
-    --menu-shadow: rgba(0, 0, 0, 0.08);
+    --menu-border: #d5dde9;
+    --menu-shadow: rgba(15, 23, 42, 0.1);
+
+    /* Sombras en capas (suaves, tintadas de azul pizarra) */
+    --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.05);
+    --shadow-card-hover: 0 2px 4px rgba(15, 23, 42, 0.05), 0 12px 28px rgba(15, 23, 42, 0.1);
+    --shadow-code: 0 1px 2px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.08), 0 24px 48px rgba(15, 23, 42, 0.07);
+
+    /* Fondo: cuadrícula de puntos y resplandor azul arriba a la izquierda */
+    --grid-dot: rgba(15, 23, 42, 0.16);
+    --bg-glow: rgba(11, 95, 217, 0.13);
+
+    /* Tarjeta de código: editor claro tipo GitHub Light */
+    --code-bg: #ffffff;
+    --code-border: #d0d7de;
+    --code-text: #24292f;
+    --syntax-keyword: #cf222e;
+    --syntax-variable: #0550ae;
+    --syntax-string: #116329;
 }
+
 
 * {
     margin: 0;
@@ -283,6 +311,7 @@ p {
     font-size: 0.9rem;
     line-height: 1.6;
     border: none;
+    color: var(--code-text);
     transition: all 0.6s ease;
     overflow: hidden;
     animation: keyFloat 2.5s ease-in-out infinite;
@@ -361,13 +390,13 @@ p {
 
 .indent { margin-left: 1.5rem; }
 .keyword { 
-    color: #569CD6;
+    color: var(--syntax-keyword);
 }
 .variable { 
-    color: var(--code-variable);
+    color: var(--syntax-variable);
 }
 .string { 
-    color: #CE9178;
+    color: var(--syntax-string);
 }
 
 .section-title {
@@ -1343,6 +1372,15 @@ section[id] {
 }
 
 /* Tema claro: excepciones que no son un simple cambio de valor */
+[data-theme="light"] .footer-text p,
+[data-theme="light"] .social-link {
+    color: var(--text-subtle);
+}
+
+[data-theme="light"] .social-link:hover {
+    color: var(--social-hover);
+}
+
 [data-theme="light"] body {
     position: relative;
 }
