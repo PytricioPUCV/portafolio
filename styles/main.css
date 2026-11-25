@@ -1380,41 +1380,6 @@ section[id] {
 }
 
 
-/* Tarjetas en claro: sombra en capas y elevación al pasar el cursor; chips y timeline más definidos */
-[data-theme="light"] .project-card,
-[data-theme="light"] .timeline-card,
-[data-theme="light"] .stat {
-    box-shadow: var(--shadow-card);
-}
-
-[data-theme="light"] .timeline-card {
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-[data-theme="light"] .project-card:hover,
-[data-theme="light"] .timeline-card:hover {
-    box-shadow: var(--shadow-card-hover);
-}
-
-[data-theme="light"] .project-image {
-    border-bottom: 1px solid var(--border);
-}
-
-[data-theme="light"] .skill-tag:hover,
-[data-theme="light"] .tech-tag:hover {
-    border-color: var(--border-hover);
-}
-
-[data-theme="light"] .timeline-date {
-    background: var(--surface-2);
-}
-
-[data-theme="light"] .cert-list li {
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
-}
-
-
-
 @media (prefers-reduced-motion: reduce) {
     [data-theme="light"] .project-card:hover,
     [data-theme="light"] .skill-tag:hover {
