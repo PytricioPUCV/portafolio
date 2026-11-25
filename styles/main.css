@@ -12,6 +12,7 @@
     --syntax-keyword: #569CD6;
     --syntax-variable: #9CDCFE;
     --syntax-string: #CE9178;
+    --syntax-key: #ffffff;
     --chip-bg: rgba(255, 255, 255, 0.1);
     --chip-bg-hover: rgba(255, 255, 255, 0.2);
     --chip-border: rgba(255, 255, 255, 0.2);
@@ -72,6 +73,7 @@
     --syntax-keyword: #cf222e;
     --syntax-variable: #0550ae;
     --syntax-string: #116329;
+    --syntax-key: #6639ba;
 }
 
 
@@ -397,6 +399,9 @@ p {
 }
 .string { 
     color: var(--syntax-string);
+}
+.property {
+    color: var(--syntax-key);
 }
 
 .section-title {
