@@ -1427,6 +1427,14 @@ section[id] {
 }
 
 
+/* Header en claro: translúcido con tinte del fondo, borde inferior sutil y desenfoque */
+[data-theme="light"] .header {
+    border-bottom: 1px solid var(--header-border);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
+    backdrop-filter: saturate(160%) blur(14px);
+}
+
+
 /* Tema claro: excepciones que no son un simple cambio de valor */
 [data-theme="light"] .footer-text p,
 [data-theme="light"] .social-link {
