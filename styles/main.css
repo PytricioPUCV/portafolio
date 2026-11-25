@@ -43,7 +43,7 @@
     --code-text: #0b1220;
     --syntax-keyword: #115796;
     --syntax-variable: #065a82;
-    --syntax-string: #8c3d1e;
+    --syntax-string: #914c30;
     --chip-bg: rgba(11, 18, 32, 0.05);
     --chip-bg-hover: rgba(11, 18, 32, 0.09);
     --chip-border: rgba(11, 18, 32, 0.16);
@@ -1437,6 +1437,34 @@ section[id] {
             rgba(var(--blob-warm), calc(var(--blob-warm-a) * 0.17)) 70%,
             rgba(var(--blob-warm), calc(var(--blob-warm-a) * 0.06)) 80%,
             rgba(var(--blob-warm), 0) 90%);
+}
+
+/* Tarjeta de código en claro: misma forma, inclinación 3D y flotado que en oscuro (no se tocan transform ni
+   animation). La superficie es la versión clara del vidrio: blanco-azulado translúcido (sin desenfoque, como
+   en el oscuro, para que cometas y estrellas se lean nítidos a través) con el mismo borde interior y glow azul; sin text-shadow ni overlay oscuro para que el texto no se ensucie. */
+[data-theme="light"] .code-animation {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.24) 0%, rgba(232, 241, 255, 0.18) 45%, rgba(205, 222, 250, 0.2) 100%);
+    box-shadow:
+        0 20px 40px rgba(24, 56, 128, 0.16),
+        0 12px 24px rgba(24, 56, 128, 0.12),
+        0 6px 12px rgba(24, 56, 128, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        inset 0 -1px 0 rgba(24, 56, 128, 0.12);
+}
+
+[data-theme="light"] .code-animation::after {
+    background: linear-gradient(145deg,
+        rgba(255, 255, 255, 0.12) 0%,
+        rgba(255, 255, 255, 0.04) 30%,
+        rgba(90, 130, 210, 0.07) 100%);
+    box-shadow:
+        0 0 24px 4px rgba(0, 112, 240, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7),
+        inset 0 -1px 0 rgba(24, 56, 128, 0.1);
+}
+
+[data-theme="light"] .code-line {
+    text-shadow: none;
 }
 
 /* Sin animación del botón "More projects" si el usuario prefiere menos movimiento (va al final para ganar en la cascada) */
