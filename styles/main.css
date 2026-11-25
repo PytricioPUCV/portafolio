@@ -1371,6 +1371,36 @@ section[id] {
     }
 }
 
+/* Tarjeta de código en claro: editor tipo GitHub Light. Inclinación estática leve (<= 3°) y flotado
+   solo con translateY, para que el texto se mantenga nítido. */
+[data-theme="light"] .code-animation {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    box-shadow: var(--shadow-code);
+    transform: perspective(1000px) rotateX(2deg) rotateY(-2deg);
+    animation: keyFloatLight 4s ease-in-out infinite;
+    -webkit-font-smoothing: antialiased;
+}
+
+[data-theme="light"] .code-animation::before,
+[data-theme="light"] .code-animation::after {
+    display: none;
+}
+
+[data-theme="light"] .code-line {
+    text-shadow: none;
+}
+
+@keyframes keyFloatLight {
+    0%, 100% {
+        transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) translateY(0);
+    }
+    50% {
+        transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) translateY(-8px);
+    }
+}
+
+
 /* Tema claro: excepciones que no son un simple cambio de valor */
 [data-theme="light"] .footer-text p,
 [data-theme="light"] .social-link {
